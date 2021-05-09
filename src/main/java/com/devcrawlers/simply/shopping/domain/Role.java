@@ -1,42 +1,28 @@
 package com.devcrawlers.simply.shopping.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.devcrawlers.simply.shopping.core.BaseEntity;
 import com.devcrawlers.simply.shopping.enums.UserRoles;
 
+import lombok.Data;
+
 @Entity
+@Data
 @Table(name = "roles")
-public class Role {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+public class Role extends BaseEntity implements Serializable {
 
-	@Enumerated(EnumType.STRING)
-	@Column(length = 20)
+	private static final long serialVersionUID = 0000000000001;
+	
+	@Enumerated(value = EnumType.STRING)
+	@Column(name = "name", length = 20)
 	private UserRoles name;
-
-	public Role() {
-
-	}
-
-	public Role(UserRoles name) {
-		this.name = name;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	public UserRoles getName() {
 		return name;

@@ -3,4 +3,7 @@ databaseChangeLog:
         file: "/db/changelog/changes/sequence.yml" 
     - include:
         file: "/db/changelog/changes/category.yml"
-                                                                         
+    - include:
+        file: "/db/changelog/changes/brands.yml" 
+    - include:
+        file: "/db/changelog/changes/attributes.yml"                          

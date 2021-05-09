@@ -1,4 +1,4 @@
-package com.devcrawlers.simply.shopping.services.impl;
+package com.devcrawlers.simply.shopping.service.impl;
 
 import java.util.Collection;
 import java.util.List;
