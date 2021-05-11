@@ -1,0 +1,134 @@
+databaseChangeLog: 
+  - changeSet:
+      id: 1
+      author: MiyuruW
+      changes: 
+        - createTable:
+            tableName: item
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: category_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_it_category
+                    references: category(id)
+              - column:
+                  name: brand_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_it_brand
+                    references: brands(id)        
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(3000)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: quantity
+                  type: bigint
+                  defaultValue : 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: attribute_value_id_1
+                  type: bigint
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_it_attribute_value1
+                    references: attribute_value(id)
+              - column:
+                  name: attribute_value_id_2
+                  type: bigint
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_it_attribute_value2
+                    references: attribute_value(id)
+              - column:
+                  name: attribute_value_id_3
+                  type: bigint
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_it_attribute_value3
+                    references: attribute_value(id)
+              - column:
+                  name: attribute_value_id_4
+                  type: bigint
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_it_attribute_value4
+                    references: attribute_value(id)                        
+              - column:
+                  name: image1
+                  type: varchar(1000)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: image2
+                  type: varchar(1000)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: image3
+                  type: varchar(1000)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: image4
+                  type: varchar(1000)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: price 
+                  type: decimal(25,2)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: discount 
+                  type: decimal(25,2)
+                  constraints:
+                    nullable: true                                                
+              - column:
+                  name: status
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_user
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_user
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: modified_date
+                  type: timestamp
+                  constraints:
+                    nullable: true
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValue : 0
+                  constraints:
+                    nullable: false

@@ -6,30 +6,30 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.devcrawlers.simply.shopping.domain.Brand;
-import com.devcrawlers.simply.shopping.enums.CommonStatus;
-
-
+import com.devcrawlers.simply.shopping.domain.Item;
 
 /**
- * Brand Repository
+ * Item Repository
  * 
  ********************************************************************************************************
- *  ###   Date         Story Point   Task No    Author       Description
+ *  ###   Date         Author    IT No.        Description
  *-------------------------------------------------------------------------------------------------------
- *    1   08-05-2021   						   MenukaJ        Created
+ *    1   05-10-2021   MiyuruW   IT19020990     Created
  *    
  ********************************************************************************************************
  */
 
 @Repository
-public interface BrandRepository extends JpaRepository<Brand, Long> {
-	
-	Optional <Brand> findByName(String name);
-	
-	List <Brand> findByStatus(CommonStatus status);
-	
-	Optional <Brand> findByNameAndId(String name, Long id);
+public interface ItemRepository extends JpaRepository<Item, Long> {
 
-	Optional<Brand> findByIdAndStatus(Long id, CommonStatus status);
+	public List<Item> findByNameContaining(String name);
+
+	public List<Item> findByStatus(String status);
+
+	public Optional<Item> findByIdAndName(Long id, String name);
+
+	public Optional<Item> findByName(String name);
+	
+	public Optional<Item> findByNameAndIdNotIn(String name, Long id);
+	
 }

@@ -5,8 +5,6 @@ import java.sql.Timestamp;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import lombok.Data;
-
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ValidateResource {
 	
@@ -42,6 +40,24 @@ public class ValidateResource {
 	
 	@JsonProperty("productId")
 	private String productId;
+	
+	@JsonProperty("categorysId")
+	private String categorysId;
+	
+	@JsonProperty("brandsId")
+	private String brandsId;
+	
+	@JsonProperty("attributeValueId1")
+	private String attributeValueId1;
+	
+	@JsonProperty("attributeValueId2")
+	private String attributeValueId2;
+	
+	@JsonProperty("attributeValueId3")
+	private String attributeValueId3;
+	
+	@JsonProperty("attributeValueId4")
+	private String attributeValueId4;
 	
 	/******************************/
 	
@@ -133,6 +149,54 @@ public class ValidateResource {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getCategorysId() {
+		return categorysId;
+	}
+
+	public void setCategorysId(String categorysId) {
+		this.categorysId = categorysId;
+	}
+
+	public String getBrandsId() {
+		return brandsId;
+	}
+
+	public void setBrandsId(String brandsId) {
+		this.brandsId = brandsId;
+	}
+
+	public String getAttributeValueId1() {
+		return attributeValueId1;
+	}
+
+	public void setAttributeValueId1(String attributeValueId1) {
+		this.attributeValueId1 = attributeValueId1;
+	}
+
+	public String getAttributeValueId2() {
+		return attributeValueId2;
+	}
+
+	public void setAttributeValueId2(String attributeValueId2) {
+		this.attributeValueId2 = attributeValueId2;
+	}
+
+	public String getAttributeValueId3() {
+		return attributeValueId3;
+	}
+
+	public void setAttributeValueId3(String attributeValueId3) {
+		this.attributeValueId3 = attributeValueId3;
+	}
+
+	public String getAttributeValueId4() {
+		return attributeValueId4;
+	}
+
+	public void setAttributeValueId4(String attributeValueId4) {
+		this.attributeValueId4 = attributeValueId4;
 	}
 	
 }

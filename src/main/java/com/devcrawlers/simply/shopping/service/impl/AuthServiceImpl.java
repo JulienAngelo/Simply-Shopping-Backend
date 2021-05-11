@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.devcrawlers.simply.shopping.base.MessagePropertyBase;
 import com.devcrawlers.simply.shopping.domain.Role;
 import com.devcrawlers.simply.shopping.domain.User;
 import com.devcrawlers.simply.shopping.enums.UserRoles;
@@ -25,13 +24,15 @@ import com.devcrawlers.simply.shopping.repository.RoleRepository;
 import com.devcrawlers.simply.shopping.repository.UserRepository;
 import com.devcrawlers.simply.shopping.resources.JwtResponseResource;
 import com.devcrawlers.simply.shopping.resources.LoginRequestResource;
-import com.devcrawlers.simply.shopping.resources.MessageResponseResource;
 import com.devcrawlers.simply.shopping.resources.SignupRequestResource;
 import com.devcrawlers.simply.shopping.security.jwt.JwtUtils;
 import com.devcrawlers.simply.shopping.service.AuthService;
 @Component
 @Transactional(rollbackFor=Exception.class)
-public class AuthServiceImpl extends MessagePropertyBase implements AuthService {
+public class AuthServiceImpl implements AuthService {
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	AuthenticationManager authenticationManager;
@@ -70,10 +71,10 @@ public class AuthServiceImpl extends MessagePropertyBase implements AuthService 
 	@Override
 	public User registerUser(SignupRequestResource signUpRequest) {
 		if (userRepository.existsByUsername(signUpRequest.getUsername()))
-			throw new ValidateRecordException(ALREADY_USER_NAME, "message");
+			throw new ValidateRecordException(environment.getProperty("user.username-exists"), "message");
 
 		if (userRepository.existsByEmail(signUpRequest.getEmail()))
-			throw new ValidateRecordException(ALREADY_EMAIL, "message");
+			throw new ValidateRecordException(environment.getProperty("user.email-exists"), "message");
 
 		User user = new User(signUpRequest.getUsername(), 
 							 signUpRequest.getEmail(),
@@ -84,20 +85,20 @@ public class AuthServiceImpl extends MessagePropertyBase implements AuthService 
 
 		if (strRoles == null) {
 			Role userRole = roleRepository.findByName(UserRoles.ROLE_USER)
-					.orElseThrow(() -> new NoRecordFoundException(ROLE_NOT_FOUND));
+					.orElseThrow(() -> new NoRecordFoundException(environment.getProperty("role-not-found")));
 			roles.add(userRole);
 		} else {
 			strRoles.forEach(role -> {
 				switch (role) {
 				case "admin":
 					Role adminRole = roleRepository.findByName(UserRoles.ROLE_ADMIN)
-							.orElseThrow(() -> new NoRecordFoundException(ROLE_NOT_FOUND));
+							.orElseThrow(() -> new NoRecordFoundException(environment.getProperty("role-not-found")));
 					roles.add(adminRole);
 
 					break;
 				default:
 					Role userRole = roleRepository.findByName(UserRoles.ROLE_USER)
-							.orElseThrow(() -> new NoRecordFoundException(ROLE_NOT_FOUND));
+							.orElseThrow(() -> new NoRecordFoundException(environment.getProperty("role-not-found")));
 					roles.add(userRole);
 				}
 			});
