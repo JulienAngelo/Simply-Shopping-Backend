@@ -114,9 +114,8 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
 	@ExceptionHandler({Exception.class})
 	public ResponseEntity<Object> exception(Exception ex, WebRequest request) {
 		MessageResponseResource messageResponseResource = new MessageResponseResource();
-		messageResponseResource.setMessage(messagePropertyBase.COMMON_INTERNAL_SERVER_ERROR);
-		messageResponseResource.setDetails(ex.getMessage());
-		return new ResponseEntity<>(messageResponseResource, HttpStatus.INTERNAL_SERVER_ERROR);
+		messageResponseResource.setMessage(ex.getMessage());
+		return new ResponseEntity<>(messageResponseResource, HttpStatus.UNPROCESSABLE_ENTITY);
 	}
 
 }
