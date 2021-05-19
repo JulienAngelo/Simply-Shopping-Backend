@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.devcrawlers.simply.shopping.base.MessagePropertyBase;
 import com.devcrawlers.simply.shopping.domain.Brand;
 import com.devcrawlers.simply.shopping.enums.CommonStatus;
 import com.devcrawlers.simply.shopping.exception.ValidateRecordException;
@@ -32,7 +32,10 @@ import com.devcrawlers.simply.shopping.service.BrandService;
 
 @Component
 @Transactional(rollbackFor=Exception.class)
-public class BrandServiceImpl extends MessagePropertyBase implements BrandService {
+public class BrandServiceImpl implements BrandService {
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private BrandRepository brandRepository;
@@ -80,7 +83,7 @@ public class BrandServiceImpl extends MessagePropertyBase implements BrandServic
         
         Optional<Brand> isPresentBrand = brandRepository.findByName(commonAddResource.getName());
         if (isPresentBrand.isPresent()) {
-        	throw new ValidateRecordException(COMMON_UNIC, "name");
+        	throw new ValidateRecordException(environment.getProperty("common.duplicate"), "name");
 		}
         
         Brand brand = new Brand();
@@ -100,11 +103,11 @@ public class BrandServiceImpl extends MessagePropertyBase implements BrandServic
 		
 		Optional<Brand> isPresentBrand = brandRepository.findById(Long.parseLong(commonUpdateResource.getId()));
 		if (!isPresentBrand.isPresent()) 
-			throw new ValidateRecordException(RECORD_NOT_FOUND, "message");
+			throw new ValidateRecordException(environment.getProperty("common.record-not-found"), "message");
 		
 		Optional<Brand> isPresentBrandName = brandRepository.findByName(commonUpdateResource.getName());
 		if (isPresentBrandName.isPresent() && isPresentBrandName.get().getId() != isPresentBrand.get().getId())			
-			throw new ValidateRecordException(COMMON_UNIC, "name");
+			throw new ValidateRecordException(environment.getProperty("common.duplicate"), "name");
 		
 		Brand brand = isPresentBrand.get();
 		brand.setName(commonUpdateResource.getName());
@@ -119,7 +122,7 @@ public class BrandServiceImpl extends MessagePropertyBase implements BrandServic
 	public void deleteBrand(Long id) {
 		Optional<Brand> isPresentBrand = brandRepository.findById(id);
 		if (!isPresentBrand.isPresent()) 
-			throw new ValidateRecordException(RECORD_NOT_FOUND, "message");
+			throw new ValidateRecordException(environment.getProperty("common.record-not-found"), "message");
 		else
 			brandRepository.deleteById(id);	
 	}

@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,10 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.devcrawlers.simply.shopping.base.MessagePropertyBase;
 import com.devcrawlers.simply.shopping.domain.AttributeValue;
 import com.devcrawlers.simply.shopping.enums.CommonStatus;
-import com.devcrawlers.simply.shopping.exception.ValidateRecordException;
 import com.devcrawlers.simply.shopping.resources.AttributeValueRequestResource;
 import com.devcrawlers.simply.shopping.resources.MessageResponseResource;
 import com.devcrawlers.simply.shopping.service.AttributeValueService;
@@ -42,7 +41,10 @@ import com.devcrawlers.simply.shopping.service.AttributeValueService;
 @RestController
 @RequestMapping(value = "/attribute-value")
 @CrossOrigin(origins = "*")
-public class AttributeValueController extends MessagePropertyBase {
+public class AttributeValueController {
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private AttributeValueService attributeValueService;
@@ -61,7 +63,7 @@ public class AttributeValueController extends MessagePropertyBase {
 			return new ResponseEntity<>((Collection<AttributeValue>)isPresentAttributeValue,HttpStatus.OK);
 		}
 		else {
-			responseMessage.setMessage(RECORD_NOT_FOUND);
+			responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -80,7 +82,7 @@ public class AttributeValueController extends MessagePropertyBase {
 			return new ResponseEntity<>(isPresentAttributeValue.get(), HttpStatus.OK);
 		}
 		else {
-			responseMessage.setMessage(RECORD_NOT_FOUND);
+			responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -99,7 +101,7 @@ public class AttributeValueController extends MessagePropertyBase {
 			return new ResponseEntity<>(isPresentAttributeValue.get(), HttpStatus.OK);
 		}
 		else {
-			responseMessage.setMessage(RECORD_NOT_FOUND);
+			responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -119,12 +121,12 @@ public class AttributeValueController extends MessagePropertyBase {
 				return new ResponseEntity<>(isPresentAttributeValue, HttpStatus.OK);
 			}
 			else {
-				responseMessage.setMessage(RECORD_NOT_FOUND);
+				responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 				return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 			}
 		}
 		else {
-			responseMessage.setMessage(COMMON_STATUS_PATTERN);
+			responseMessage.setMessage(environment.getProperty("common-status.pattern"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -138,7 +140,7 @@ public class AttributeValueController extends MessagePropertyBase {
 	@PostMapping("/add")
 	public ResponseEntity<Object> addAttributeValue(@Valid @RequestBody AttributeValueRequestResource attributeValueAddResource){
 		AttributeValue attributeValue = attributeValueService.addAttributeValue(attributeValueAddResource);
-		MessageResponseResource responseMessage = new MessageResponseResource(RECORD_CREATED, Long.toString(attributeValue.getId()));
+		MessageResponseResource responseMessage = new MessageResponseResource(environment.getProperty("common.saved"), Long.toString(attributeValue.getId()));
 		return new ResponseEntity<>(responseMessage,HttpStatus.CREATED);
 	}
 	
@@ -156,11 +158,11 @@ public class AttributeValueController extends MessagePropertyBase {
 		if(isPresentAttributeValue.isPresent()) {
 			attributeValueUpdateResource.setId(id.toString());
 			AttributeValue attributeValue = attributeValueService.updateAttributeValue(attributeValueUpdateResource);
-			MessageResponseResource = new MessageResponseResource(RECORD_UPDATED, attributeValue.getId().toString());
+			MessageResponseResource = new MessageResponseResource(environment.getProperty("common.updated"), attributeValue.getId().toString());
 			return new ResponseEntity<>(MessageResponseResource,HttpStatus.OK);
 		}
 		else {
-			MessageResponseResource.setMessage(RECORD_NOT_FOUND);
+			MessageResponseResource.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(MessageResponseResource, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 	}
@@ -176,11 +178,11 @@ public class AttributeValueController extends MessagePropertyBase {
 		Optional<AttributeValue>isPresentAttributeValue = attributeValueService.getById(id);		
 		if(isPresentAttributeValue.isPresent()) {
 			attributeValueService.deleteAttributeValue(id);
-			MessageResponseResource = new MessageResponseResource(RECORD_DELETED, id.toString());
+			MessageResponseResource = new MessageResponseResource(environment.getProperty("common.deleted"), id.toString());
 			return new ResponseEntity<>(MessageResponseResource,HttpStatus.OK);
 		}
 		else {
-			MessageResponseResource.setMessage(RECORD_NOT_FOUND);
+			MessageResponseResource.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(MessageResponseResource, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 	}
@@ -199,7 +201,7 @@ public class AttributeValueController extends MessagePropertyBase {
 			return new ResponseEntity<>((Collection<AttributeValue>)isPresentAttributeValue,HttpStatus.OK);
 		}
 		else {
-			responseMessage.setMessage(RECORD_NOT_FOUND);
+			responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}

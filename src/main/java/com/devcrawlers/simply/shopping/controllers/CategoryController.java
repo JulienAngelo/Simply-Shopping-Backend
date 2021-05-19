@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,10 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.devcrawlers.simply.shopping.base.MessagePropertyBase;
 import com.devcrawlers.simply.shopping.domain.Category;
 import com.devcrawlers.simply.shopping.enums.CommonStatus;
-import com.devcrawlers.simply.shopping.exception.ValidateRecordException;
 import com.devcrawlers.simply.shopping.resources.CommonRequestResource;
 import com.devcrawlers.simply.shopping.resources.MessageResponseResource;
 import com.devcrawlers.simply.shopping.service.CategoryService;
@@ -42,7 +41,10 @@ import com.devcrawlers.simply.shopping.service.CategoryService;
 @RestController
 @RequestMapping(value = "/category")
 @CrossOrigin(origins = "*")
-public class CategoryController extends MessagePropertyBase {
+public class CategoryController {
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private CategoryService categoryService;
@@ -60,7 +62,7 @@ public class CategoryController extends MessagePropertyBase {
 			return new ResponseEntity<>((Collection<Category>)isPresentCategory,HttpStatus.OK);
 		}
 		else {
-			responseMessage.setMessage(RECORD_NOT_FOUND);
+			responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -78,7 +80,7 @@ public class CategoryController extends MessagePropertyBase {
 			return new ResponseEntity<>(isPresentCategory.get(), HttpStatus.OK);
 		}
 		else {
-			responseMessage.setMessage(RECORD_NOT_FOUND);
+			responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -96,7 +98,7 @@ public class CategoryController extends MessagePropertyBase {
 			return new ResponseEntity<>(isPresentCategory.get(), HttpStatus.OK);
 		}
 		else {
-			responseMessage.setMessage(RECORD_NOT_FOUND);
+			responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -115,12 +117,12 @@ public class CategoryController extends MessagePropertyBase {
 				return new ResponseEntity<>(isPresentCategory, HttpStatus.OK);
 			}
 			else {
-				responseMessage.setMessage(RECORD_NOT_FOUND);
+				responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 				return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 			}
 		}
 		else {
-			responseMessage.setMessage(COMMON_STATUS_PATTERN);
+			responseMessage.setMessage(environment.getProperty("common-status.pattern"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -133,7 +135,7 @@ public class CategoryController extends MessagePropertyBase {
 	@PostMapping("/add")
 	public ResponseEntity<Object> addCategory(@Valid @RequestBody CommonRequestResource commonAddResource){
 		Category Category = categoryService.addCategory(commonAddResource);
-		MessageResponseResource responseMessage = new MessageResponseResource(RECORD_CREATED, Long.toString(Category.getId()));
+		MessageResponseResource responseMessage = new MessageResponseResource(environment.getProperty("common.saved"), Long.toString(Category.getId()));
 		return new ResponseEntity<>(responseMessage,HttpStatus.CREATED);
 	}
 	
@@ -150,11 +152,11 @@ public class CategoryController extends MessagePropertyBase {
 		if(isPresentCategory.isPresent()) {
 			commonUpdateResource.setId(id.toString());
 			Category category = categoryService.updateCategory(commonUpdateResource);
-			MessageResponseResource = new MessageResponseResource(RECORD_UPDATED, category.getId().toString());
+			MessageResponseResource = new MessageResponseResource(environment.getProperty("common.updated"), category.getId().toString());
 			return new ResponseEntity<>(MessageResponseResource,HttpStatus.OK);
 		}
 		else {
-			MessageResponseResource.setMessage(RECORD_NOT_FOUND);
+			MessageResponseResource.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(MessageResponseResource, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 	}
@@ -169,11 +171,11 @@ public class CategoryController extends MessagePropertyBase {
 		Optional<Category>isPresentCategory = categoryService.getById(id);		
 		if(isPresentCategory.isPresent()) {
 			categoryService.deleteCategory(id);
-			MessageResponseResource = new MessageResponseResource(RECORD_DELETED, id.toString());
+			MessageResponseResource = new MessageResponseResource(environment.getProperty("common.deleted"), id.toString());
 			return new ResponseEntity<>(MessageResponseResource,HttpStatus.OK);
 		}
 		else {
-			MessageResponseResource.setMessage(RECORD_NOT_FOUND);
+			MessageResponseResource.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(MessageResponseResource, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 	}

@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.devcrawlers.simply.shopping.base.MessagePropertyBase;
 import com.devcrawlers.simply.shopping.domain.Attributes;
 import com.devcrawlers.simply.shopping.enums.CommonStatus;
 import com.devcrawlers.simply.shopping.exception.ValidateRecordException;
@@ -33,7 +33,10 @@ import com.devcrawlers.simply.shopping.service.AttributesService;
 
 @Component
 @Transactional(rollbackFor=Exception.class)
-public class AttributesServiceImpl extends MessagePropertyBase implements AttributesService {
+public class AttributesServiceImpl implements AttributesService {
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private AttributesRepository attributesRepository;
@@ -82,7 +85,7 @@ public class AttributesServiceImpl extends MessagePropertyBase implements Attrib
         
         Optional<Attributes> isPresentAttributes = attributesRepository.findByName(commonAddResource.getName());
         if (isPresentAttributes.isPresent()) {
-        	throw new ValidateRecordException(COMMON_UNIC, "name");
+        	throw new ValidateRecordException(environment.getProperty("common.duplicate"), "name");
 		}
         
         Attributes attributes = new Attributes();
@@ -102,11 +105,11 @@ public class AttributesServiceImpl extends MessagePropertyBase implements Attrib
 		
 		Optional<Attributes> isPresentAttributes = attributesRepository.findById(Long.parseLong(AttributesUpdateResource.getId()));
 		if (!isPresentAttributes.isPresent()) 
-			throw new ValidateRecordException(RECORD_NOT_FOUND, "message");
+			throw new ValidateRecordException(environment.getProperty("common.record-not-found"), "message");
 		
 		Optional<Attributes> isPresentAttributesName = attributesRepository.findByName(AttributesUpdateResource.getName());
 		if (isPresentAttributesName.isPresent() && isPresentAttributesName.get().getId() != isPresentAttributes.get().getId())			
-			throw new ValidateRecordException(COMMON_UNIC, "name");
+			throw new ValidateRecordException(environment.getProperty("common.duplicate"), "name");
 		
 		Attributes attributes = isPresentAttributes.get();
 		attributes.setName(AttributesUpdateResource.getName());
@@ -121,7 +124,7 @@ public class AttributesServiceImpl extends MessagePropertyBase implements Attrib
 	public void deleteAttributes(Long id) {
 		Optional<Attributes> isPresentAttributes = attributesRepository.findById(id);
 		if (!isPresentAttributes.isPresent()) 
-			throw new ValidateRecordException(RECORD_NOT_FOUND, "message");
+			throw new ValidateRecordException(environment.getProperty("common.record-not-found"), "message");
 		else
 			attributesRepository.deleteById(id);
 	}

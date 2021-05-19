@@ -4,7 +4,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.devcrawlers.simply.shopping.base.MessagePropertyBase;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
@@ -19,16 +18,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class CommonRequestResource extends MessagePropertyBase{
+public class CommonRequestResource {
 	
 	private String id;
 	
-	@NotBlank(message = COMMON_NOT_NULL)
-	@Size(max = 70, message = COMMON_NAME_SIZE)
+	@NotBlank(message = "{common.not-null}")
+	@Size(max = 70, message = "{common-name.size}")
 	private String name;
 	
-	@NotBlank(message = COMMON_NOT_NULL)
-	@Pattern(regexp = "ACTIVE|INACTIVE", message = COMMON_STATUS_PATTERN)
+	@NotBlank(message = "{common.not-null}")
+	@Pattern(regexp = "^$|ACTIVE|INACTIVE",message="{common-status.pattern}")
 	private String status;
 	
 	private String tenantId;

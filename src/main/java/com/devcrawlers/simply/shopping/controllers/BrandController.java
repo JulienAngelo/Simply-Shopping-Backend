@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,16 +20,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.devcrawlers.simply.shopping.base.MessagePropertyBase;
 import com.devcrawlers.simply.shopping.domain.Brand;
 import com.devcrawlers.simply.shopping.enums.CommonStatus;
-import com.devcrawlers.simply.shopping.exception.ValidateRecordException;
 import com.devcrawlers.simply.shopping.resources.CommonRequestResource;
 import com.devcrawlers.simply.shopping.resources.MessageResponseResource;
 import com.devcrawlers.simply.shopping.service.BrandService;
 
-
-	
 
 /**
  * Brand Controller
@@ -44,7 +41,10 @@ import com.devcrawlers.simply.shopping.service.BrandService;
 @RestController
 @RequestMapping(value = "/brand")
 @CrossOrigin(origins = "*")
-public class BrandController extends MessagePropertyBase {
+public class BrandController {
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private BrandService brandService;
@@ -63,7 +63,7 @@ public class BrandController extends MessagePropertyBase {
 			return new ResponseEntity<>((Collection<Brand>)isPresentBrand,HttpStatus.OK);
 		}
 		else {
-			responseMessage.setMessage(RECORD_NOT_FOUND);
+			responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -82,7 +82,7 @@ public class BrandController extends MessagePropertyBase {
 			return new ResponseEntity<>(isPresentBrand.get(), HttpStatus.OK);
 		}
 		else {
-			responseMessage.setMessage(RECORD_NOT_FOUND);
+			responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -101,7 +101,7 @@ public class BrandController extends MessagePropertyBase {
 			return new ResponseEntity<>(isPresentBrand.get(), HttpStatus.OK);
 		}
 		else {
-			responseMessage.setMessage(RECORD_NOT_FOUND);
+			responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -121,12 +121,12 @@ public class BrandController extends MessagePropertyBase {
 				return new ResponseEntity<>(isPresentBrand, HttpStatus.OK);
 			}
 			else {
-				responseMessage.setMessage(RECORD_NOT_FOUND);
+				responseMessage.setMessage(environment.getProperty("common.record-not-found"));
 				return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 			}
 		}
 		else {
-			responseMessage.setMessage(COMMON_STATUS_PATTERN);
+			responseMessage.setMessage(environment.getProperty("common-status.pattern"));
 			return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
 		}
 	}
@@ -140,7 +140,7 @@ public class BrandController extends MessagePropertyBase {
 	@PostMapping("/add")
 	public ResponseEntity<Object> addBrand(@Valid @RequestBody CommonRequestResource commonAddResource){
 		Brand Brand = brandService.addBrand(commonAddResource);
-		MessageResponseResource responseMessage = new MessageResponseResource(RECORD_CREATED, Long.toString(Brand.getId()));
+		MessageResponseResource responseMessage = new MessageResponseResource(environment.getProperty("common.saved"), Long.toString(Brand.getId()));
 		return new ResponseEntity<>(responseMessage,HttpStatus.CREATED);
 	}
 	
@@ -158,11 +158,11 @@ public class BrandController extends MessagePropertyBase {
 		if(isPresentBrand.isPresent()) {
 			commonUpdateResource.setId(id.toString());
 			Brand Brand = brandService.updateBrand(commonUpdateResource);
-			MessageResponseResource = new MessageResponseResource(RECORD_UPDATED, Brand.getId().toString());
+			MessageResponseResource = new MessageResponseResource(environment.getProperty("common.updated"), Brand.getId().toString());
 			return new ResponseEntity<>(MessageResponseResource,HttpStatus.OK);
 		}
 		else {
-			MessageResponseResource.setMessage(RECORD_NOT_FOUND);
+			MessageResponseResource.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(MessageResponseResource, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 	}
@@ -178,11 +178,11 @@ public class BrandController extends MessagePropertyBase {
 		Optional<Brand>isPresentBrand = brandService.getById(id);		
 		if(isPresentBrand.isPresent()) {
 			brandService.deleteBrand(id);
-			MessageResponseResource = new MessageResponseResource(RECORD_DELETED, id.toString());
+			MessageResponseResource = new MessageResponseResource(environment.getProperty("common.deleted"), id.toString());
 			return new ResponseEntity<>(MessageResponseResource,HttpStatus.OK);
 		}
 		else {
-			MessageResponseResource.setMessage(RECORD_NOT_FOUND);
+			MessageResponseResource.setMessage(environment.getProperty("common.record-not-found"));
 			return new ResponseEntity<>(MessageResponseResource, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 	}

@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.devcrawlers.simply.shopping.base.MessagePropertyBase;
 import com.devcrawlers.simply.shopping.domain.Category;
 import com.devcrawlers.simply.shopping.enums.CommonStatus;
 import com.devcrawlers.simply.shopping.exception.ValidateRecordException;
@@ -31,7 +31,10 @@ import com.devcrawlers.simply.shopping.service.CategoryService;
 
 @Component
 @Transactional(rollbackFor=Exception.class)
-public class CategoryServiceImpl extends MessagePropertyBase implements CategoryService {
+public class CategoryServiceImpl implements CategoryService {
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private CategoryRepository categoryRepository;
@@ -79,7 +82,7 @@ public class CategoryServiceImpl extends MessagePropertyBase implements Category
         
         Optional<Category> isPresentCategory = categoryRepository.findByName(commonAddResource.getName());
         if (isPresentCategory.isPresent()) {
-        	throw new ValidateRecordException(COMMON_UNIC, "name");
+        	throw new ValidateRecordException(environment.getProperty("common.duplicate"), "name");
 		}
         
         Category category = new Category();
@@ -99,11 +102,11 @@ public class CategoryServiceImpl extends MessagePropertyBase implements Category
 		
 		Optional<Category> isPresentCategory = categoryRepository.findById(Long.parseLong(commonUpdateResource.getId()));
 		if (!isPresentCategory.isPresent()) 
-			throw new ValidateRecordException(RECORD_NOT_FOUND, "message");
+			throw new ValidateRecordException(environment.getProperty("common.record-not-found"), "message");
 		
 		Optional<Category> isPresentCategoryName = categoryRepository.findByName(commonUpdateResource.getName());
 		if (isPresentCategoryName.isPresent() && isPresentCategoryName.get().getId() != isPresentCategory.get().getId())			
-			throw new ValidateRecordException(COMMON_UNIC, "name");
+			throw new ValidateRecordException(environment.getProperty("common.duplicate"), "name");
 		
 		Category category = isPresentCategory.get();
 		category.setName(commonUpdateResource.getName());
@@ -118,7 +121,7 @@ public class CategoryServiceImpl extends MessagePropertyBase implements Category
 	public void deleteCategory(Long id) {
 		Optional<Category> isPresentCategory = categoryRepository.findById(id);
 		if (!isPresentCategory.isPresent()) 
-			throw new ValidateRecordException(RECORD_NOT_FOUND, "message");
+			throw new ValidateRecordException(environment.getProperty("common.record-not-found"), "message");
 		else
 			categoryRepository.deleteById(id);	
 	}
