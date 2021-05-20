@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author: Sahan
+      author: MenukaJ
       changes:
         - createTable:
             tableName: common_seq
@@ -11,7 +11,7 @@ databaseChangeLog:
                   type: bigint
   - changeSet:
       id: 2
-      author: Sahan
+      author: MenukaJ
       changes:
         - insert:
             tableName: common_seq

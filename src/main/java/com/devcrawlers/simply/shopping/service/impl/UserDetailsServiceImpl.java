@@ -1,4 +1,4 @@
-package com.devcrawlers.simply.shopping.services.impl;
+package com.devcrawlers.simply.shopping.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

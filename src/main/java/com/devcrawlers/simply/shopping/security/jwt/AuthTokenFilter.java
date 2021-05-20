@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.devcrawlers.simply.shopping.services.impl.UserDetailsServiceImpl;
+import com.devcrawlers.simply.shopping.service.impl.UserDetailsServiceImpl;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
 	@Autowired
@@ -27,6 +27,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 	private UserDetailsServiceImpl userDetailsService;
 
 	private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+	
+	private String username;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -34,7 +36,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 		try {
 			String jwt = parseJwt(request);
 			if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-				String username = jwtUtils.getUserNameFromJwtToken(jwt);
+				username = jwtUtils.getUserNameFromJwtToken(jwt);
 
 				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -59,4 +61,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
 		return null;
 	}
+
+	public String getUsername() {
+		return username;
+	}
+	
+	
 }

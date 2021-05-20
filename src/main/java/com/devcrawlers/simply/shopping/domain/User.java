@@ -1,5 +1,6 @@
 package com.devcrawlers.simply.shopping.domain;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,16 +9,17 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.devcrawlers.simply.shopping.core.BaseEntity;
+
 @Entity
 @Table(	name = "users", 
 		uniqueConstraints = { 
 			@UniqueConstraint(columnNames = "username"),
 			@UniqueConstraint(columnNames = "email") 
 		})
-public class User {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class User extends BaseEntity implements Serializable {
+	
+	private static final long serialVersionUID = 0000000000001;
 
 	@NotBlank
 	@Size(max = 20)

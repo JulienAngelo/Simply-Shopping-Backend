@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.devcrawlers.simply.shopping.security.jwt.AuthEntryPointJwt;
 import com.devcrawlers.simply.shopping.security.jwt.AuthTokenFilter;
-import com.devcrawlers.simply.shopping.services.impl.UserDetailsServiceImpl;
+import com.devcrawlers.simply.shopping.service.impl.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -57,8 +57,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable()
 			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-			.authorizeRequests().antMatchers("/api/auth/**").permitAll()
+			.authorizeRequests().antMatchers("/auth/**").permitAll()
 			.antMatchers("/api/test/**").permitAll()
+			.antMatchers("/attributes/**").permitAll()
+			.antMatchers("/attribute-value/**").permitAll()
+			.antMatchers("/brand/**").permitAll()
+			.antMatchers("/category/**").permitAll()
+			.antMatchers("/item/**").permitAll()
 			.anyRequest().authenticated();
 
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
