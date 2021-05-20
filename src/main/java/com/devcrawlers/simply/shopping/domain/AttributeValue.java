@@ -64,6 +64,9 @@ public class AttributeValue extends BaseEntity implements Serializable {
 	
 	@Transient
 	private Long attributeId;
+	
+	@Transient
+	private String attributeName;
 
 	public Attributes getAttributes() {
 		return attributes;
@@ -123,5 +126,9 @@ public class AttributeValue extends BaseEntity implements Serializable {
 
 	public Long getAttributeId() {
 		return attributes.getId();
+	}
+
+	public String getAttributeName() {
+		return attributes.getName();
 	}
 }

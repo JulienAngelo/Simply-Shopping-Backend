@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.devcrawlers.simply.shopping.base.MessagePropertyBase;
 import com.devcrawlers.simply.shopping.domain.AttributeValue;
 import com.devcrawlers.simply.shopping.domain.Attributes;
 import com.devcrawlers.simply.shopping.enums.CommonStatus;
@@ -34,7 +34,10 @@ import com.devcrawlers.simply.shopping.service.AttributeValueService;
 
 @Component
 @Transactional(rollbackFor=Exception.class)
-public class AttributeValueServiceImpl extends MessagePropertyBase implements AttributeValueService {
+public class AttributeValueServiceImpl implements AttributeValueService {
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private AttributeValueRepository attributeValueRepository;
@@ -90,9 +93,9 @@ public class AttributeValueServiceImpl extends MessagePropertyBase implements At
         
         Optional<Attributes> isPresentAttributes = attributesRepository.findById(Long.parseLong(attributeValueAddResource.getAttributesId()));
         if (!isPresentAttributes.isPresent())
-        	throw new ValidateRecordException(COMMON_INVALID_VALUE, "attributesId");
+        	throw new ValidateRecordException(environment.getProperty("common.invalid-value"), "attributesId");
         if(isPresentAttributes.get().getStatus().equals(CommonStatus.INACTIVE))
-        	throw new ValidateRecordException(COMMON_INVALID_VALUE, "attributesId");
+        	throw new ValidateRecordException(environment.getProperty("common.invalid-value"), "attributesId");
         
         AttributeValue attributeValue = new AttributeValue();
         attributeValue.setAttributes(isPresentAttributes.get());
@@ -112,7 +115,7 @@ public class AttributeValueServiceImpl extends MessagePropertyBase implements At
 		
 		Optional<AttributeValue> isPresentAttributeValue = attributeValueRepository.findById(Long.parseLong(attributeValueUpdateResource.getId()));
 		if (!isPresentAttributeValue.isPresent()) 
-			throw new ValidateRecordException(RECORD_NOT_FOUND, "message");
+			throw new ValidateRecordException(environment.getProperty("common.record-not-found"), "message");
 		
 		Optional<AttributeValue> isPresentAttributeValueName = attributeValueRepository.findByName(attributeValueUpdateResource.getName());
 		if (isPresentAttributeValueName.isPresent() && isPresentAttributeValueName.get().getId() != isPresentAttributeValue.get().getId())			
@@ -120,9 +123,9 @@ public class AttributeValueServiceImpl extends MessagePropertyBase implements At
 		
         Optional<Attributes> isPresentAttributes = attributesRepository.findById(Long.parseLong(attributeValueUpdateResource.getAttributesId()));
         if (!isPresentAttributes.isPresent())
-        	throw new ValidateRecordException(COMMON_INVALID_VALUE, "attributesId");
+        	throw new ValidateRecordException(environment.getProperty("common.invalid-value"), "attributesId");
         if(isPresentAttributes.get().getStatus().equals(CommonStatus.INACTIVE))
-        	throw new ValidateRecordException(COMMON_INVALID_VALUE, "attributesId");
+        	throw new ValidateRecordException(environment.getProperty("common.invalid-value"), "attributesId");
 		
 		AttributeValue attributeValue = isPresentAttributeValue.get();
 		
@@ -139,7 +142,7 @@ public class AttributeValueServiceImpl extends MessagePropertyBase implements At
 	public void deleteAttributeValue(Long id) {
 		Optional<AttributeValue> isPresentAttributeValue = attributeValueRepository.findById(id);
 		if (!isPresentAttributeValue.isPresent()) 
-			throw new ValidateRecordException(RECORD_NOT_FOUND, "message");
+			throw new ValidateRecordException(environment.getProperty("common.record-not-found"), "message");
 		else
 			attributeValueRepository.deleteById(id);	
 	}

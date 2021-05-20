@@ -1,8 +1,9 @@
 package com.devcrawlers.simply.shopping.base;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,10 @@ import com.devcrawlers.simply.shopping.exception.NoRecordFoundException;
 import com.devcrawlers.simply.shopping.exception.ValidateRecordException;
 import com.devcrawlers.simply.shopping.resources.AttributeValueRequestResource;
 import com.devcrawlers.simply.shopping.resources.CommonRequestResource;
+import com.devcrawlers.simply.shopping.resources.ItemAddResource;
+import com.devcrawlers.simply.shopping.resources.ItemUpdateResource;
 import com.devcrawlers.simply.shopping.resources.MessageResponseResource;
 import com.devcrawlers.simply.shopping.resources.ValidateResource;
-
-
 
 
 /**
@@ -34,13 +35,13 @@ import com.devcrawlers.simply.shopping.resources.ValidateResource;
 @RestControllerAdvice
 public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 	
-	MessagePropertyBase messagePropertyBase;
+	@Autowired
+	private Environment environment;
 
-	
 	@Override 
 	protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) { 
 		MessageResponseResource messageResponseResource = new MessageResponseResource();
-		messageResponseResource.setMessage(messagePropertyBase.INVALID_URL_PATTERN);
+		messageResponseResource.setMessage(environment.getProperty("common.invalid-url-pattern"));
 		messageResponseResource.setDetails(ex.getMessage());
 		return new ResponseEntity<>(messageResponseResource, HttpStatus.NOT_FOUND);
 	}
@@ -64,7 +65,7 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		}
 		catch (Exception e) {
 			MessageResponseResource messageResponseResource = new MessageResponseResource();
-			messageResponseResource.setMessage(messagePropertyBase.COMMON_INTERNAL_SERVER_ERROR);
+			messageResponseResource.setMessage(environment.getProperty("common.internal-server-error"));
 			messageResponseResource.setDetails(e.getMessage());
 			return new ResponseEntity<>(messageResponseResource, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -99,13 +100,29 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		            sField.set(attributeValueAddResource.getClass().cast(attributeValueAddResource), error.getDefaultMessage());
 				}
 				return new ResponseEntity<>(attributeValueAddResource, HttpStatus.UNPROCESSABLE_ENTITY);
+        	case "itemAddResource": 
+        		ItemAddResource  itemAddResource = new ItemAddResource();
+				for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+					sField =  itemAddResource.getClass().getDeclaredField(error.getField());
+		            sField.setAccessible(true);
+		            sField.set(itemAddResource.getClass().cast(itemAddResource), error.getDefaultMessage());
+				}
+				return new ResponseEntity<>(itemAddResource, HttpStatus.UNPROCESSABLE_ENTITY);
+        	case "itemUpdateResource": 
+        		ItemUpdateResource  itemUpdateResource = new ItemUpdateResource();
+				for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+					sField =  itemUpdateResource.getClass().getDeclaredField(error.getField());
+		            sField.setAccessible(true);
+		            sField.set(itemUpdateResource.getClass().cast(itemUpdateResource), error.getDefaultMessage());
+				}
+				return new ResponseEntity<>(itemUpdateResource, HttpStatus.UNPROCESSABLE_ENTITY);	
 		
 	        	default:   
 	        		return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
 	        }
 		} catch (Exception e) {
 			MessageResponseResource messageResponseResource = new MessageResponseResource();
-			messageResponseResource.setMessage(messagePropertyBase.COMMON_INTERNAL_SERVER_ERROR);
+			messageResponseResource.setMessage(environment.getProperty("common.internal-server-error"));
 			messageResponseResource.setDetails(e.getMessage());
 			return new ResponseEntity<>(messageResponseResource, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -116,6 +133,7 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		MessageResponseResource messageResponseResource = new MessageResponseResource();
 		messageResponseResource.setMessage(ex.getMessage());
 		return new ResponseEntity<>(messageResponseResource, HttpStatus.UNPROCESSABLE_ENTITY);
+
 	}
 
 }
