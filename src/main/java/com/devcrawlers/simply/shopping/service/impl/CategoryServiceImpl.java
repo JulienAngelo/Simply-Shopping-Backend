@@ -87,6 +87,7 @@ public class CategoryServiceImpl implements CategoryService {
         
         Category category = new Category();
         category.setName(commonAddResource.getName());
+        category.setImage(commonAddResource.getImage());
         category.setStatus(CommonStatus.valueOf(commonAddResource.getStatus()));
         category.setCreatedDate(currentTimestamp);
         category.setCreatedUser(authTokenFilter.getUsername());
@@ -110,6 +111,7 @@ public class CategoryServiceImpl implements CategoryService {
 		
 		Category category = isPresentCategory.get();
 		category.setName(commonUpdateResource.getName());
+		category.setImage(commonUpdateResource.getImage());
 		category.setStatus(CommonStatus.valueOf(commonUpdateResource.getStatus()));
 		category.setModifiedDate(currentTimestamp);
 		category.setModifiedUser(authTokenFilter.getUsername());

@@ -26,6 +26,8 @@ public class CommonRequestResource {
 	@Size(max = 70, message = "{common-name.size}")
 	private String name;
 	
+	private String image;
+	
 	@NotBlank(message = "{common.not-null}")
 	@Pattern(regexp = "^$|ACTIVE|INACTIVE",message="{common-status.pattern}")
 	private String status;
@@ -62,6 +64,14 @@ public class CommonRequestResource {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 }
 	
