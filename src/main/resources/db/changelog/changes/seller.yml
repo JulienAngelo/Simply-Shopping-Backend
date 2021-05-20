@@ -1,0 +1,114 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Mahinsha
+      changes:
+        - createTable:
+            tableName: seller
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: first_name
+                  type: varchar(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: varchar(80)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address_line1
+                  type: varchar(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address_line2
+                  type: varchar(40)
+                  contstraints:
+                    nullable: false
+              - column:
+                  name: address_line3
+                  type: varchar(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(80)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: mobile
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: landline
+                  type: bigint
+                  constraints:
+                     nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_sellerand_user
+                    references: user(id)
+              - column:
+                  name: nic
+                  type: varchar(12)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dob
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_user
+                  type: varchar(255)
+                  constraints:
+                     nullable: false
+              - column:
+                  name: created_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_user
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: modified_date
+                  type: timestamp
+                  constraints:
+                    nullable: true
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: seller
+            constraintName: fk_sellerand_user
+            referencedColumnNames: id
+            referencedTableName: user
