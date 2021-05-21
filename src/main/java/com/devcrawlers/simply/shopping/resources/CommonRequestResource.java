@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  ********************************************************************************************************
  *  ###   Date         Story Point   Task No    Author       Description
  *-------------------------------------------------------------------------------------------------------
- *    1   02-08-2020          					MenukaJ     Created
+ *    1   02-05-2021          					MenukaJ     Created
  *    
  ********************************************************************************************************
  */
@@ -32,7 +32,6 @@ public class CommonRequestResource {
 	@Pattern(regexp = "^$|ACTIVE|INACTIVE",message="{common-status.pattern}")
 	private String status;
 	
-	private String tenantId;
 
 	public String getName() {
 		return name;
@@ -50,13 +49,6 @@ public class CommonRequestResource {
 		this.status = status;
 	}
 
-	public String getTenantId() {
-		return tenantId;
-	}
-
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
 
 	public String getId() {
 		return id;

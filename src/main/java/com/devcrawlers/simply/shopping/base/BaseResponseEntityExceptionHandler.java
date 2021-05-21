@@ -1,6 +1,7 @@
 package com.devcrawlers.simply.shopping.base;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -19,6 +20,9 @@ import com.devcrawlers.simply.shopping.exception.NoRecordFoundException;
 import com.devcrawlers.simply.shopping.exception.ValidateRecordException;
 import com.devcrawlers.simply.shopping.resources.AttributeValueRequestResource;
 import com.devcrawlers.simply.shopping.resources.CommonRequestResource;
+import com.devcrawlers.simply.shopping.resources.DeliveyInfoRequestResource;
+import com.devcrawlers.simply.shopping.resources.DeliveyItemsResources;
+import com.devcrawlers.simply.shopping.resources.DummyPaymentRequestResource;
 import com.devcrawlers.simply.shopping.resources.ItemAddResource;
 import com.devcrawlers.simply.shopping.resources.ItemUpdateResource;
 import com.devcrawlers.simply.shopping.resources.MessageResponseResource;
@@ -116,10 +120,48 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		            sField.set(itemUpdateResource.getClass().cast(itemUpdateResource), error.getDefaultMessage());
 				}
 				return new ResponseEntity<>(itemUpdateResource, HttpStatus.UNPROCESSABLE_ENTITY);	
-		
+        	case "dummyPaymentRequestResource": 
+        		DummyPaymentRequestResource  dummyPaymentRequestResource = new DummyPaymentRequestResource();
+				for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+					sField =  dummyPaymentRequestResource.getClass().getDeclaredField(error.getField());
+		            sField.setAccessible(true);
+		            sField.set(dummyPaymentRequestResource.getClass().cast(dummyPaymentRequestResource), error.getDefaultMessage());
+				}
+				return new ResponseEntity<>(dummyPaymentRequestResource, HttpStatus.UNPROCESSABLE_ENTITY);
+				
+        	case "deliveyInfoRequestResource": 
+        		DeliveyInfoRequestResource deliveyInfoRequestResource = new DeliveyInfoRequestResource();
+				for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+					fieldName=error.getField();
+					if(fieldName.startsWith("items")) {
+						 fieldName=fieldName.replace("items", "");
+							 atPoint = fieldName.indexOf(']');
+							 index=Integer.parseInt(fieldName.substring(1, atPoint));
+							 fieldName=fieldName.substring(atPoint+2);
+							 for (int i=0; i<=index; i++) {
+								 if(deliveyInfoRequestResource.getItems()==null || deliveyInfoRequestResource.getItems().isEmpty()) {
+									 deliveyInfoRequestResource.setItems(new ArrayList<DeliveyItemsResources>());
+									 deliveyInfoRequestResource.getItems().add(i, new DeliveyItemsResources());
+								 }else{
+									 if((deliveyInfoRequestResource.getItems().size()-1)<i) {
+										 deliveyInfoRequestResource.getItems().add(i, new DeliveyItemsResources());
+									 }
+								 }
+							 }
+							 sField=deliveyInfoRequestResource.getItems().get(index).getClass().getDeclaredField(fieldName);
+							 sField.setAccessible(true);
+							 sField.set(deliveyInfoRequestResource.getItems().get(index), error.getDefaultMessage());
+				}else {
+						sField =  deliveyInfoRequestResource.getClass().getDeclaredField(error.getField());
+		                sField.setAccessible(true);
+		                sField.set(deliveyInfoRequestResource.getClass().cast(deliveyInfoRequestResource), error.getDefaultMessage());
+					}
+				}
+				return new ResponseEntity<>(deliveyInfoRequestResource, HttpStatus.UNPROCESSABLE_ENTITY);				
 	        	default:   
 	        		return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
 	        }
+			
 		} catch (Exception e) {
 			MessageResponseResource messageResponseResource = new MessageResponseResource();
 			messageResponseResource.setMessage(environment.getProperty("common.internal-server-error"));

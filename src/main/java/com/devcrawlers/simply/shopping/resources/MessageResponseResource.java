@@ -18,6 +18,47 @@ public class MessageResponseResource {
 	@JsonProperty("response")
 	private Object response;
 
+	@JsonProperty("refrenceNo")
+	private String refrenceNo;
+	
+	@JsonProperty("status")
+	private String status;
+	
+	@JsonProperty("deliveryFee")
+	private String deliveryFee;
+	
+	public String getDeliveryFee() {
+		return deliveryFee;
+	}
+
+	public void setDeliveryFee(String deliveryFee) {
+		this.deliveryFee = deliveryFee;
+	}
+
+	public Object getResponse() {
+		return response;
+	}
+
+	public void setResponse(Object response) {
+		this.response = response;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getRefrenceNo() {
+		return refrenceNo;
+	}
+
+	public void setRefrenceNo(String refrenceNo) {
+		this.refrenceNo = refrenceNo;
+	}
+
 	public MessageResponseResource() {
 		super();
 	}
