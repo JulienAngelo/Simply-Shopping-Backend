@@ -36,7 +36,7 @@ databaseChangeLog:
               - column:
                   name: address_line2
                   type: varchar(40)
-                  contstraints:
+                  constraints:
                     nullable: false
               - column:
                   name: address_line3
@@ -64,7 +64,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     foreignKeyName: fk_sellerand_user
-                    references: user(id)
+                    references: users(id)
               - column:
                   name: nic
                   type: varchar(12)
@@ -72,7 +72,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: dob
-                  type: timestamp
+                  type: varchar(20)
                   constraints:
                     nullable: false
               - column:
@@ -100,15 +100,3 @@ databaseChangeLog:
                   type: timestamp
                   constraints:
                     nullable: true
-              - column:
-                  name: version
-                  type: bigint
-                  defaultValue: 0
-                  constraints:
-                    nullable: false
-        - addForeignKeyConstraint:
-            baseColumnNames: user_id
-            baseTableName: seller
-            constraintName: fk_sellerand_user
-            referencedColumnNames: id
-            referencedTableName: user
