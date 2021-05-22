@@ -58,6 +58,16 @@ public interface ItemService {
 	
 	
 	/**
+	 * Find by category id and status.
+	 *
+	 * @param categoryId - the category id
+	 * @param status - the status
+	 * @return the list
+	 */
+	public List<Item> findByCategoryIdAndStatus(Long categoryId, String status);
+	
+	
+	/**
 	 * Save and validate item.
 	 *
 	 * @param itemAddResource - the item add resource

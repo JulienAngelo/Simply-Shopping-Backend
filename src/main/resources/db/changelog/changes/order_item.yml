@@ -4,7 +4,7 @@ databaseChangeLog:
       author: MiyuruW
       changes: 
         - createTable:
-            tableName: orders
+            tableName: order_item
             columns:
               - column:
                   name: id
@@ -14,57 +14,30 @@ databaseChangeLog:
                     nullable: false
                     primaryKey: true
               - column:
-                  name: buyer_id
+                  name: order_id
                   type: bigint
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_ord_buyer
-                    references: buyer(id)
+                    foreignKeyName: fk_ord_order
+                    references: orders(id)
               - column:
-                  name: service_charge_rate 
-                  type: decimal(25,2)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: service_charge 
-                  type: decimal(25,2)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: vat_charge_rate 
-                  type: decimal(25,2)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: vat_charge 
-                  type: decimal(25,2)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: net_amount 
-                  type: decimal(25,2)
-                  constraints:
-                    nullable: true            
-              - column:
-                  name: paid_status
-                  type: varchar(30)
-                  constraints:
-                    nullable: false      
-              - column:
-                  name: payment_ref_no
-                  type: varchar(100)
-                  constraints:
-                    nullable: false      
-              - column:
-                  name: payment_date
-                  type: timestamp
+                  name: item_id
+                  type: bigint
                   constraints:
                     nullable: false
+                    foreignKeyName: fk_ord_item
+                    references: item(id)
               - column:
-                  name: delivery_flag
-                  type: varchar(10)
+                  name: quantity
+                  type: bigint
+                  defaultValue : 0
                   constraints:
-                    nullable: false      
+                    nullable: false            
+              - column:
+                  name: amount 
+                  type: decimal(25,2)
+                  constraints:
+                    nullable: false
               - column:
                   name: status
                   type: varchar(10)

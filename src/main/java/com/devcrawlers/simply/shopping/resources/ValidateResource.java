@@ -59,6 +59,9 @@ public class ValidateResource {
 	@JsonProperty("attributeValueId4")
 	private String attributeValueId4;
 	
+	@JsonProperty("buyersId")
+	private String buyersId;
+	
 	/******************************/
 	
 	
@@ -197,6 +200,14 @@ public class ValidateResource {
 
 	public void setAttributeValueId4(String attributeValueId4) {
 		this.attributeValueId4 = attributeValueId4;
+	}
+
+	public String getBuyersId() {
+		return buyersId;
+	}
+
+	public void setBuyersId(String buyersId) {
+		this.buyersId = buyersId;
 	}
 	
 }

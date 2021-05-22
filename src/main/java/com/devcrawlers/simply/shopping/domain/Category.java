@@ -35,6 +35,9 @@ public class Category extends BaseEntity implements Serializable {
 	@Column(name = "name")
 	private String name;
 	
+	@Column(name = "image")
+	private String image;
+	
 	@Enumerated(value = EnumType.STRING)
 	@Column(name = "status")
 	private CommonStatus status;
@@ -97,6 +100,14 @@ public class Category extends BaseEntity implements Serializable {
 
 	public void setModifiedDate(Timestamp modifiedDate) {
 		this.modifiedDate = modifiedDate;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 }

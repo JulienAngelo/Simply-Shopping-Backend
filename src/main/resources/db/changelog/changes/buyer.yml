@@ -1,10 +1,10 @@
 databaseChangeLog: 
   - changeSet:
       id: 1
-      author: MiyuruW
+      author: Angelo
       changes: 
         - createTable:
-            tableName: orders
+            tableName: buyer
             columns:
               - column:
                   name: id
@@ -14,54 +14,79 @@ databaseChangeLog:
                     nullable: false
                     primaryKey: true
               - column:
-                  name: buyer_id
+                  name: user_id
                   type: bigint
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_ord_buyer
-                    references: buyer(id)
+                    foreignKeyName: fk_buyer_user
+                    references: users(id)                    
               - column:
-                  name: service_charge_rate 
-                  type: decimal(25,2)
+                  name: first_name
+                  type: varchar(70)
                   constraints:
-                    nullable: true
+                    nullable: false 
               - column:
-                  name: service_charge 
-                  type: decimal(25,2)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: vat_charge_rate 
-                  type: decimal(25,2)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: vat_charge 
-                  type: decimal(25,2)
-                  constraints:
-                    nullable: true
-              - column:
-                  name: net_amount 
-                  type: decimal(25,2)
-                  constraints:
-                    nullable: true            
-              - column:
-                  name: paid_status
-                  type: varchar(30)
-                  constraints:
-                    nullable: false      
-              - column:
-                  name: payment_ref_no
-                  type: varchar(100)
-                  constraints:
-                    nullable: false      
-              - column:
-                  name: payment_date
-                  type: timestamp
+                  name: last_name
+                  type: varchar(70)
                   constraints:
                     nullable: false
               - column:
-                  name: delivery_flag
+                  name: full_name
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address_line1
+                  type: varchar(70)
+                  constraints:
+                    nullable: false      
+              - column:
+                  name: address_line2
+                  type: varchar(70)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address_line3
+                  type: varchar(70)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: email
+                  type: varchar(70)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone_number
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: land_line
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: nic
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dob
+                  type: varchar(10)
+                  constraints:
+                    nullable: true              
+              - column:
+                  name: card_no
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: csv_no
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expire_date
                   type: varchar(10)
                   constraints:
                     nullable: false      
@@ -79,7 +104,7 @@ databaseChangeLog:
                   name: created_date
                   type: timestamp
                   constraints:
-                    nullable: true
+                    nullable: false
               - column:
                   name: modified_user
                   type: varchar(255)

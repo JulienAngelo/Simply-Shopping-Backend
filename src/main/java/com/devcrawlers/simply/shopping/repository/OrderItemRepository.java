@@ -1,15 +1,14 @@
 package com.devcrawlers.simply.shopping.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.devcrawlers.simply.shopping.domain.Item;
+import com.devcrawlers.simply.shopping.domain.OrderItem;
 
 /**
- * Item Repository
+ * Order Item Repository
  * 
  ********************************************************************************************************
  *  ###   Date         Author    IT No.        Description
@@ -20,20 +19,14 @@ import com.devcrawlers.simply.shopping.domain.Item;
  */
 
 @Repository
-public interface ItemRepository extends JpaRepository<Item, Long> {
+public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
-	public List<Item> findByNameContaining(String name);
+	public List<OrderItem> findByStatus(String status);
 
-	public List<Item> findByStatus(String status);
+	public List<OrderItem> findByOrderId(Long id);
 
-	public Optional<Item> findByIdAndName(Long id, String name);
+	public Boolean existsByOrderIdAndItemId(Long id, Long itemId);
 
-	public Optional<Item> findByName(String name);
-	
-	public Optional<Item> findByNameAndIdNotIn(String name, Long id);
-
-	public Optional<Item> findByIdAndStatus(Long id, String status);
-	
-	public List<Item> findByCategoryIdAndStatus(Long categoryId, String status);
+	public void deleteByOrderId(Long id);
 	
 }

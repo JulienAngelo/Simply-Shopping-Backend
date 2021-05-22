@@ -49,3 +49,16 @@ databaseChangeLog:
                   defaultValue : 0
                   constraints:
                     nullable: false
+                    
+  - changeSet:
+        id: 2
+        author: MenukaJ
+        changes:
+        - addColumn:
+            columns:
+            - column:
+                  name: image
+                  type: varchar(1000)
+                  constraints:
+                    nullable: true
+            tableName: category                     
