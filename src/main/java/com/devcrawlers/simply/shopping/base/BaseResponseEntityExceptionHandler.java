@@ -23,6 +23,9 @@ import com.devcrawlers.simply.shopping.exception.NoRecordFoundException;
 import com.devcrawlers.simply.shopping.exception.ValidateRecordException;
 import com.devcrawlers.simply.shopping.resources.AttributeValueRequestResource;
 import com.devcrawlers.simply.shopping.resources.CommonRequestResource;
+import com.devcrawlers.simply.shopping.resources.DeliveyInfoRequestResource;
+import com.devcrawlers.simply.shopping.resources.DeliveyItemsResources;
+import com.devcrawlers.simply.shopping.resources.DummyPaymentRequestResource;
 import com.devcrawlers.simply.shopping.resources.ItemAddResource;
 import com.devcrawlers.simply.shopping.resources.ItemUpdateResource;
 import com.devcrawlers.simply.shopping.resources.MessageResponseResource;
@@ -123,7 +126,45 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		            sField.setAccessible(true);
 		            sField.set(itemUpdateResource.getClass().cast(itemUpdateResource), error.getDefaultMessage());
 				}
-				return new ResponseEntity<>(itemUpdateResource, HttpStatus.UNPROCESSABLE_ENTITY);
+				return new ResponseEntity<>(itemUpdateResource, HttpStatus.UNPROCESSABLE_ENTITY);	
+        	case "dummyPaymentRequestResource": 
+        		DummyPaymentRequestResource  dummyPaymentRequestResource = new DummyPaymentRequestResource();
+				for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+					sField =  dummyPaymentRequestResource.getClass().getDeclaredField(error.getField());
+		            sField.setAccessible(true);
+		            sField.set(dummyPaymentRequestResource.getClass().cast(dummyPaymentRequestResource), error.getDefaultMessage());
+				}
+				return new ResponseEntity<>(dummyPaymentRequestResource, HttpStatus.UNPROCESSABLE_ENTITY);
+				
+        	case "deliveyInfoRequestResource": 
+        		DeliveyInfoRequestResource deliveyInfoRequestResource = new DeliveyInfoRequestResource();
+				for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+					fieldName=error.getField();
+					if(fieldName.startsWith("items")) {
+						 fieldName=fieldName.replace("items", "");
+							 atPoint = fieldName.indexOf(']');
+							 index=Integer.parseInt(fieldName.substring(1, atPoint));
+							 fieldName=fieldName.substring(atPoint+2);
+							 for (int i=0; i<=index; i++) {
+								 if(deliveyInfoRequestResource.getItems()==null || deliveyInfoRequestResource.getItems().isEmpty()) {
+									 deliveyInfoRequestResource.setItems(new ArrayList<DeliveyItemsResources>());
+									 deliveyInfoRequestResource.getItems().add(i, new DeliveyItemsResources());
+								 }else{
+									 if((deliveyInfoRequestResource.getItems().size()-1)<i) {
+										 deliveyInfoRequestResource.getItems().add(i, new DeliveyItemsResources());
+									 }
+								 }
+							 }
+							 sField=deliveyInfoRequestResource.getItems().get(index).getClass().getDeclaredField(fieldName);
+							 sField.setAccessible(true);
+							 sField.set(deliveyInfoRequestResource.getItems().get(index), error.getDefaultMessage());
+				}else {
+						sField =  deliveyInfoRequestResource.getClass().getDeclaredField(error.getField());
+		                sField.setAccessible(true);
+		                sField.set(deliveyInfoRequestResource.getClass().cast(deliveyInfoRequestResource), error.getDefaultMessage());
+					}
+				}
+				return new ResponseEntity<>(deliveyInfoRequestResource, HttpStatus.UNPROCESSABLE_ENTITY);				
         	case "orderAddResource": 
         		OrderAddResource orderAddResource = new OrderAddResource();
                 for (FieldError error : ex.getBindingResult().getFieldErrors()) {
@@ -181,11 +222,12 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
                         sField.set(orderUpdateResource.getClass().cast(orderUpdateResource), error.getDefaultMessage());
                     }
                 }
-                return new ResponseEntity<>(orderUpdateResource, HttpStatus.UNPROCESSABLE_ENTITY);	
-				
+                return new ResponseEntity<>(orderUpdateResource, HttpStatus.UNPROCESSABLE_ENTITY);
+                
 	        	default:   
 	        		return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
 	        }
+			
 		} catch (Exception e) {
 			MessageResponseResource messageResponseResource = new MessageResponseResource();
 			messageResponseResource.setMessage(environment.getProperty("common.internal-server-error"));
@@ -197,9 +239,9 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
 	@ExceptionHandler({Exception.class})
 	public ResponseEntity<Object> exception(Exception ex, WebRequest request) {
 		MessageResponseResource messageResponseResource = new MessageResponseResource();
-		messageResponseResource.setMessage(environment.getProperty("common.internal-server-error"));
-		messageResponseResource.setDetails(ex.getMessage());
-		return new ResponseEntity<>(messageResponseResource, HttpStatus.INTERNAL_SERVER_ERROR);
+		messageResponseResource.setMessage(ex.getMessage());
+		return new ResponseEntity<>(messageResponseResource, HttpStatus.UNPROCESSABLE_ENTITY);
+
 	}
 	
 	@ExceptionHandler({InvalidDetailListServiceIdException.class})

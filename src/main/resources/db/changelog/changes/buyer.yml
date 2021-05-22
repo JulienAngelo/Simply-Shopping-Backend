@@ -1,7 +1,7 @@
 databaseChangeLog: 
   - changeSet:
       id: 1
-      author: MiyuruW
+      author: Angelo
       changes: 
         - createTable:
             tableName: buyer
@@ -12,17 +12,109 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     nullable: false
-                    primaryKey: true                                                      
+                    primaryKey: true
               - column:
-                  name: name
-                  type: varchar(10)
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_buyer_user
+                    references: users(id)                    
+              - column:
+                  name: first_name
+                  type: varchar(70)
+                  constraints:
+                    nullable: false 
+              - column:
+                  name: last_name
+                  type: varchar(70)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address_line1
+                  type: varchar(70)
+                  constraints:
+                    nullable: false      
+              - column:
+                  name: address_line2
+                  type: varchar(70)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address_line3
+                  type: varchar(70)
                   constraints:
                     nullable: true
+              - column:
+                  name: email
+                  type: varchar(70)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone_number
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: land_line
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: nic
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dob
+                  type: varchar(10)
+                  constraints:
+                    nullable: true              
+              - column:
+                  name: card_no
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: csv_no
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expire_date
+                  type: varchar(10)
+                  constraints:
+                    nullable: false      
               - column:
                   name: status
                   type: varchar(10)
                   constraints:
-                    nullable: false      
+                    nullable: false
+              - column:
+                  name: created_user
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_user
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: modified_date
+                  type: timestamp
+                  constraints:
+                    nullable: true
               - column:
                   name: version
                   type: bigint

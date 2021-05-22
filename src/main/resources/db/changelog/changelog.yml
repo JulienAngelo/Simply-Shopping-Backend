@@ -14,4 +14,4 @@ databaseChangeLog:
     - include:
         file: "/db/changelog/changes/order.yml"
     - include:
-        file: "/db/changelog/changes/order_item.yml"                                          
+        file: "/db/changelog/changes/order_item.yml"

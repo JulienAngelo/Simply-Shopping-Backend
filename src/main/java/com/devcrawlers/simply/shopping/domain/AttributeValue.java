@@ -139,4 +139,5 @@ public class AttributeValue extends BaseEntity implements Serializable {
 			return null;
 		}
 	}
+
 }
