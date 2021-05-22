@@ -70,7 +70,14 @@ public class SellerServiceImpl implements SellerService {
 	@Override
 	public Optional<Seller> getByUserId(Long id) {
 		
-		return sellerRepository.findByUserId(id);
+		Optional<Seller> isPresentSeller = sellerRepository.findByUserId(id);
+		
+		if(isPresentSeller.isPresent()) {
+			return Optional.ofNullable(isPresentSeller.get());
+		}
+		else {
+			return Optional.empty();
+		}
 	}
 	
 	@Override
