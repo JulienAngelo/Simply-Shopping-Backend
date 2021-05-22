@@ -84,6 +84,11 @@ public class ItemServiceImpl implements ItemService {
 	public List<Item> findByName(String name) {
 		return itemRepository.findByNameContaining(name);
 	}
+	
+	@Override
+	public List<Item> findByCategoryIdAndStatus(Long categoryId, String status) {
+		return itemRepository.findByCategoryIdAndStatus(categoryId, status);
+	}
 
 	@Override
 	public Long saveAndValidateItem(ItemAddResource itemAddResource) {
@@ -146,11 +151,15 @@ public class ItemServiceImpl implements ItemService {
 		
 		item.setName(itemAddResource.getName());
 		item.setDescription(itemAddResource.getDescription());
-		item.setQuantity(Long.parseLong(itemAddResource.getQuantity()));
-		item.setImage1(itemAddResource.getImage1());
-		item.setImage2(itemAddResource.getImage2());
-		item.setImage3(itemAddResource.getImage3());
-		item.setImage4(itemAddResource.getImage4());
+		if (itemAddResource.getQuantity() != null && !itemAddResource.getQuantity().isEmpty()) {
+			item.setQuantity(Long.parseLong(itemAddResource.getQuantity()));
+		} else {
+			item.setQuantity(Long.valueOf(0));
+		}
+		item.setUrl1(itemAddResource.getUrl1());
+		item.setUrl2(itemAddResource.getUrl2());
+		item.setUrl3(itemAddResource.getUrl3());
+		item.setUrl4(itemAddResource.getUrl4());
 		item.setPrice(new BigDecimal(itemAddResource.getPrice()));
 		item.setDiscount(new BigDecimal(itemAddResource.getDiscount()));
 		item.setStatus(itemAddResource.getStatus());
@@ -164,7 +173,7 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public Item updateAndValidateItem(Long id, ItemUpdateResource itemUpdateResource) {
 		
-		Optional<Item> isPresentItem = itemRepository.findById(Long.parseLong(itemUpdateResource.getCategorysId()));
+		Optional<Item> isPresentItem = itemRepository.findById(id);
 		if (!isPresentItem.isPresent()) {
 			throw new ValidateRecordException(environment.getProperty("common.record-not-found"), "message");
 		}
@@ -228,10 +237,10 @@ public class ItemServiceImpl implements ItemService {
 		item.setName(itemUpdateResource.getName());
 		item.setDescription(itemUpdateResource.getDescription());
 		item.setQuantity(Long.parseLong(itemUpdateResource.getQuantity()));
-		item.setImage1(itemUpdateResource.getImage1());
-		item.setImage2(itemUpdateResource.getImage2());
-		item.setImage3(itemUpdateResource.getImage3());
-		item.setImage4(itemUpdateResource.getImage4());
+		item.setUrl1(itemUpdateResource.getUrl1());
+		item.setUrl2(itemUpdateResource.getUrl2());
+		item.setUrl3(itemUpdateResource.getUrl3());
+		item.setUrl4(itemUpdateResource.getUrl4());
 		item.setPrice(new BigDecimal(itemUpdateResource.getPrice()));
 		item.setDiscount(new BigDecimal(itemUpdateResource.getDiscount()));
 		item.setStatus(itemUpdateResource.getStatus());

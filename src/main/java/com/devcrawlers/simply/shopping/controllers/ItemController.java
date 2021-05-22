@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.devcrawlers.simply.shopping.domain.Item;
+import com.devcrawlers.simply.shopping.enums.CommonStatus;
 import com.devcrawlers.simply.shopping.resources.ItemAddResource;
 import com.devcrawlers.simply.shopping.resources.ItemUpdateResource;
 import com.devcrawlers.simply.shopping.resources.MessageResponseResource;
@@ -119,6 +120,18 @@ public class ItemController {
 		}
 	}
 	
+	@GetMapping(value = "/category/{categoryId}")
+	public ResponseEntity<Object> getItemsByCategory(@PathVariable(value = "categoryId", required = true) Long categoryId) {
+		MessageResponseResource messageResponseResource = new MessageResponseResource();
+		List<Item> item = itemService.findByCategoryIdAndStatus(categoryId, CommonStatus.ACTIVE.toString());
+		if (!item.isEmpty()) {
+			return new ResponseEntity<>((Collection<Item>) item, HttpStatus.OK);
+		} else {
+			messageResponseResource.setMessage(environment.getProperty("common.record-not-found"));
+			return new ResponseEntity<>(messageResponseResource, HttpStatus.NO_CONTENT);
+		}
+	}
+	
 	/**
 	 * Adds the item.
 	 *
@@ -157,7 +170,7 @@ public class ItemController {
 	public ResponseEntity<Object> deleteItem(@PathVariable(value = "id", required = true) Long id) {
 		String message = itemService.deleteItem(id);
 		MessageResponseResource messageResponseResource = new MessageResponseResource(message);
-		return new ResponseEntity<>(messageResponseResource, HttpStatus.CREATED);
+		return new ResponseEntity<>(messageResponseResource, HttpStatus.OK);
 	}
 	
 }

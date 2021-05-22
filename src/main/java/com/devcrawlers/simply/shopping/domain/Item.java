@@ -32,6 +32,8 @@ import lombok.Data;
 @Table(name = "item")
 public class Item extends BaseEntity implements Serializable {
 	
+	private static final long serialVersionUID = -4530733821780008289L;
+
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "category_id", nullable = false)
@@ -40,6 +42,9 @@ public class Item extends BaseEntity implements Serializable {
 	@Transient
     private Long categorysId;
 	
+	@Transient
+    private String categorysName;
+	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "brand_id", nullable = false)
@@ -47,6 +52,9 @@ public class Item extends BaseEntity implements Serializable {
 	
 	@Transient
     private Long brandsId;
+	
+	@Transient
+    private String brandsName;
 	
 	@Column(name = "name")
 	private String name;
@@ -65,6 +73,15 @@ public class Item extends BaseEntity implements Serializable {
 	@Transient
     private Long attributeValueId1;
 	
+	@Transient
+    private String attributeValueId1Name;
+	
+	@Transient
+    private Long attribute1Id;
+	
+	@Transient
+    private String attribute1Name;
+	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "attribute_value_id_2", nullable = true)
@@ -72,6 +89,15 @@ public class Item extends BaseEntity implements Serializable {
 	
 	@Transient
     private Long attributeValueId2;
+	
+	@Transient
+    private String attributeValueId2Name;
+	
+	@Transient
+    private Long attribute2Id;
+	
+	@Transient
+    private String attribute2Name;
 	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
@@ -81,6 +107,15 @@ public class Item extends BaseEntity implements Serializable {
 	@Transient
     private Long attributeValueId3;
 	
+	@Transient
+    private String attributeValueId3Name;
+	
+	@Transient
+    private Long attribute3Id;
+	
+	@Transient
+    private String attribute3Name;
+	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "attribute_value_id_4", nullable = true)
@@ -89,17 +124,26 @@ public class Item extends BaseEntity implements Serializable {
 	@Transient
     private Long attributeValueId4;
 	
+	@Transient
+    private String attributeValueId4Name;
+	
+	@Transient
+    private Long attribute4Id;
+	
+	@Transient
+    private String attribute4Name;
+	
 	@Column(name = "image1")
-	private String image1;
+	private String url1;
 	
 	@Column(name = "image2")
-	private String image2;
+	private String url2;
 	
 	@Column(name = "image3")
-	private String image3;
+	private String url3;
 	
 	@Column(name = "image4")
-	private String image4;
+	private String url4;
 	
 	@Column(name = "price")
 	private BigDecimal price;
@@ -131,11 +175,19 @@ public class Item extends BaseEntity implements Serializable {
 	}
 
 	public Long getCategorysId() {
-		return categorysId;
+		if(category != null) {
+			return category.getId();
+		} else {
+			return null;
+		}
 	}
 
-	public void setCategorysId(Long categorysId) {
-		this.categorysId = categorysId;
+	public String getCategorysName() {
+		if(category != null) {
+			return category.getName();
+		} else {
+			return null;
+		}
 	}
 
 	public Brand getBrand() {
@@ -147,11 +199,19 @@ public class Item extends BaseEntity implements Serializable {
 	}
 
 	public Long getBrandsId() {
-		return brandsId;
+		if(brand != null) {
+			return brand.getId();
+		} else {
+			return null;
+		}
 	}
 
-	public void setBrandsId(Long brandsId) {
-		this.brandsId = brandsId;
+	public String getBrandsName() {
+		if(brand != null) {
+			return brand.getName();
+		} else {
+			return null;
+		}
 	}
 
 	public String getName() {
@@ -187,11 +247,35 @@ public class Item extends BaseEntity implements Serializable {
 	}
 
 	public Long getAttributeValueId1() {
-		return attributeValueId1;
+		if(attributeValue1 != null) {
+			return attributeValue1.getId();
+		} else {
+			return null;
+		}
+	}
+	
+	public String getAttributeValueId1Name() {
+		if(attributeValue1 != null) {
+			return attributeValue1.getName();
+		} else {
+			return null;
+		}
 	}
 
-	public void setAttributeValueId1(Long attributeValueId1) {
-		this.attributeValueId1 = attributeValueId1;
+	public Long getAttribute1Id() {
+		if(attributeValue1 != null) {
+			return attributeValue1.getAttributes().getId();
+		} else {
+			return null;
+		}
+	}
+
+	public String getAttribute1Name() {
+		if(attributeValue1 != null) {
+			return attributeValue1.getAttributes().getName();
+		} else {
+			return null;
+		}
 	}
 
 	public AttributeValue getAttributeValue2() {
@@ -203,11 +287,35 @@ public class Item extends BaseEntity implements Serializable {
 	}
 
 	public Long getAttributeValueId2() {
-		return attributeValueId2;
+		if(attributeValue2 != null) {
+			return attributeValue2.getId();
+		} else {
+			return null;
+		}
+	}
+	
+	public String getAttributeValueId2Name() {
+		if(attributeValue2 != null) {
+			return attributeValue2.getName();
+		} else {
+			return null;
+		}
+	}
+	
+	public Long getAttribute2Id() {
+		if(attributeValue2 != null) {
+			return attributeValue2.getAttributes().getId();
+		} else {
+			return null;
+		}
 	}
 
-	public void setAttributeValueId2(Long attributeValueId2) {
-		this.attributeValueId2 = attributeValueId2;
+	public String getAttribute2Name() {
+		if(attributeValue2 != null) {
+			return attributeValue2.getAttributes().getName();
+		} else {
+			return null;
+		}
 	}
 
 	public AttributeValue getAttributeValue3() {
@@ -219,11 +327,35 @@ public class Item extends BaseEntity implements Serializable {
 	}
 
 	public Long getAttributeValueId3() {
-		return attributeValueId3;
+		if(attributeValue3 != null) {
+			return attributeValue3.getId();
+		} else {
+			return null;
+		}
+	}
+	
+	public String getAttributeValueId3Name() {
+		if(attributeValue3 != null) {
+			return attributeValue3.getName();
+		} else {
+			return null;
+		}
+	}
+	
+	public Long getAttribute3Id() {
+		if(attributeValue3 != null) {
+			return attributeValue3.getAttributes().getId();
+		} else {
+			return null;
+		}
 	}
 
-	public void setAttributeValueId3(Long attributeValueId3) {
-		this.attributeValueId3 = attributeValueId3;
+	public String getAttribute3Name() {
+		if(attributeValue3 != null) {
+			return attributeValue3.getAttributes().getName();
+		} else {
+			return null;
+		}
 	}
 
 	public AttributeValue getAttributeValue4() {
@@ -235,43 +367,67 @@ public class Item extends BaseEntity implements Serializable {
 	}
 
 	public Long getAttributeValueId4() {
-		return attributeValueId4;
+		if(attributeValue4 != null) {
+			return attributeValue4.getId();
+		} else {
+			return null;
+		}
+	}
+	
+	public String getAttributeValueId4Name() {
+		if(attributeValue4 != null) {
+			return attributeValue4.getName();
+		} else {
+			return null;
+		}
 	}
 
-	public void setAttributeValueId4(Long attributeValueId4) {
-		this.attributeValueId4 = attributeValueId4;
+	public Long getAttribute4Id() {
+		if(attributeValue4 != null) {
+			return attributeValue4.getAttributes().getId();
+		} else {
+			return null;
+		}
 	}
 
-	public String getImage1() {
-		return image1;
+	public String getAttribute4Name() {
+		if(attributeValue4 != null) {
+			return attributeValue4.getAttributes().getName();
+		} else {
+			return null;
+		}
+	}
+	
+	public String getUrl1() {
+		return url1;
 	}
 
-	public void setImage1(String image1) {
-		this.image1 = image1;
+	public void setUrl1(String url1) {
+		this.url1 = url1;
 	}
 
-	public String getImage2() {
-		return image2;
+	public String getUrl2() {
+		return url2;
 	}
 
-	public void setImage2(String image2) {
-		this.image2 = image2;
+	public void setUrl2(String url2) {
+		this.url2 = url2;
 	}
 
-	public String getImage3() {
-		return image3;
+	public String getUrl3() {
+		return url3;
 	}
 
-	public void setImage3(String image3) {
-		this.image3 = image3;
+	public void setUrl3(String url3) {
+		this.url3 = url3;
 	}
 
-	public String getImage4() {
-		return image4;
+	public String getUrl4() {
+		return url4;
 	}
 
-	public void setImage4(String image4) {
-		this.image4 = image4;
+	public void setUrl4(String url4) {
+		this.url4 = url4;
 	}
 
 	public BigDecimal getPrice() {

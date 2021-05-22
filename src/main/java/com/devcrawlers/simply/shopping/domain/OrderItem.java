@@ -1,54 +1,62 @@
 package com.devcrawlers.simply.shopping.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import com.devcrawlers.simply.shopping.core.BaseEntity;
-import com.devcrawlers.simply.shopping.enums.CommonStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Data;
 
 /**
- * Attribute Value
+ * Order Item Domain
  * 
  ********************************************************************************************************
- *  ###   Date         Story Point   Task No    Author       Description
+ *  ###   Date         Author    IT No.        Description
  *-------------------------------------------------------------------------------------------------------
- *    1   01-08-2020                            MenukaJ        Created
+ *    1   05-10-2021   MiyuruW   IT19020990     Created
  *    
  ********************************************************************************************************
  */
 
 @Entity
 @Data
-@Table(name = "attribute_value")
-public class AttributeValue extends BaseEntity implements Serializable {
+@Table(name = "order_item")
+public class OrderItem extends BaseEntity implements Serializable {
 
-	private static final long serialVersionUID = 0000000000001;
+	private static final long serialVersionUID = 6983080720951604482L;
+
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinColumn(name = "order_id", nullable = false)
+	private Order order;
+	
+	@Transient
+    private Long ordersId;
 	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-	@JoinColumn(name = "attributes_id")  
-	private Attributes attributes;
+	@JoinColumn(name = "item_id", nullable = false)
+	private Item item;
 	
-	@Column(name = "name")
-	private String name;
+	@Transient
+    private Long itemsId;
 	
-	@Enumerated(value = EnumType.STRING)
+	@Column(name = "quantity")
+	private Long quantity;
+	
+	@Column(name = "amount")
+	private BigDecimal amount;
+	
 	@Column(name = "status")
-	private CommonStatus status;
+	private String status;
 	
 	@Column(name = "created_user")
 	private String createdUser;
@@ -61,34 +69,60 @@ public class AttributeValue extends BaseEntity implements Serializable {
 	
 	@Column(name = "modified_date")
 	private Timestamp modifiedDate;
-	
-	@Transient
-	private Long attributeId;
-	
-	@Transient
-	private String attributeName;
 
-	public Attributes getAttributes() {
-		return attributes;
+	public Order getOrder() {
+		return order;
 	}
 
-	public void setAttributes(Attributes attributes) {
-		this.attributes = attributes;
+	public void setOrder(Order order) {
+		this.order = order;
 	}
 
-	public String getName() {
-		return name;
+	public Long getOrdersId() {
+		if(order != null) {
+			return order.getId();
+		} else {
+			return null;
+		}
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public Item getItem() {
+		return item;
 	}
 
-	public CommonStatus getStatus() {
+	public void setItem(Item item) {
+		this.item = item;
+	}
+
+	public Long getItemsId() {
+		if(item != null) {
+			return item.getId();
+		} else {
+			return null;
+		}
+	}
+
+	public Long getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Long quantity) {
+		this.quantity = quantity;
+	}
+
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
+
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(CommonStatus status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
@@ -124,19 +158,4 @@ public class AttributeValue extends BaseEntity implements Serializable {
 		this.modifiedDate = modifiedDate;
 	}
 	
-	public Long getAttributeId() {
-		if(attributes != null) {
-			return attributes.getId();
-		} else {
-			return null;
-		}
-	}
-
-	public String getAttributeName() {
-		if(attributes != null) {
-			return attributes.getName();
-		} else {
-			return null;
-		}
-	}
 }
