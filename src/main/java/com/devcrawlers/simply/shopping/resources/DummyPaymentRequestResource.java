@@ -32,6 +32,16 @@ public class DummyPaymentRequestResource {
 	@NotBlank(message = "{common.not-null}")
 	@Pattern(regexp = "^$|\\d{1,20}\\.\\d{1,2}$",message="{common-amount.pattern}")
 	private String payment;
+	
+	private String bank;
+
+	public String getBank() {
+		return bank;
+	}
+
+	public void setBank(String bank) {
+		this.bank = bank;
+	}
 
 	public String getCardNumber() {
 		return cardNumber;

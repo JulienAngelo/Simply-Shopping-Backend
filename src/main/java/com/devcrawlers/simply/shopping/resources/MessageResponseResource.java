@@ -27,6 +27,17 @@ public class MessageResponseResource {
 	@JsonProperty("deliveryFee")
 	private String deliveryFee;
 	
+	@JsonProperty("bank")
+	private String bank;
+	
+	public String getBank() {
+		return bank;
+	}
+
+	public void setBank(String bank) {
+		this.bank = bank;
+	}
+
 	public String getDeliveryFee() {
 		return deliveryFee;
 	}
