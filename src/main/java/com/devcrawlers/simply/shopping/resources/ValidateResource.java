@@ -62,6 +62,12 @@ public class ValidateResource {
 	@JsonProperty("buyersId")
 	private String buyersId;
 	
+	@JsonProperty("orderId")
+	private String orderId;
+	
+	@JsonProperty("itemsId")
+	private String itemsId;
+	
 	/******************************/
 	
 	
@@ -208,6 +214,22 @@ public class ValidateResource {
 
 	public void setBuyersId(String buyersId) {
 		this.buyersId = buyersId;
+	}
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getItemsId() {
+		return itemsId;
+	}
+
+	public void setItemsId(String itemsId) {
+		this.itemsId = itemsId;
 	}
 	
 }

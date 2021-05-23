@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class OrderItemAddResource {
 	
-    private String itemList;
+	private String itemList;
 	
     @NotBlank(message = "{common.not-null}")
 	@Pattern(regexp = "^$|[0-9]+", message = "{common-numeric.pattern}")
@@ -20,10 +20,6 @@ public class OrderItemAddResource {
 	@NotBlank(message = "{common.not-null}")
 	@Pattern(regexp = "^$|\\d{1,20}\\.\\d{1,2}$",message="{common-amount.pattern}")
 	private String amount;
-	
-	@NotBlank(message = "{common.not-null}")
-	@Pattern(regexp = "^$|ACTIVE|INACTIVE",message="{common-status.pattern}")
-	private String status;
 
 	public String getItemList() {
 		return itemList;
@@ -55,14 +51,6 @@ public class OrderItemAddResource {
 
 	public void setAmount(String amount) {
 		this.amount = amount;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 	
 }

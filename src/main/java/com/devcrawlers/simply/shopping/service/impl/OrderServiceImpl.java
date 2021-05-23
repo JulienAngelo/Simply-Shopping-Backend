@@ -19,6 +19,8 @@ import com.devcrawlers.simply.shopping.domain.Order;
 import com.devcrawlers.simply.shopping.domain.OrderItem;
 import com.devcrawlers.simply.shopping.enums.ActionType;
 import com.devcrawlers.simply.shopping.enums.CommonStatus;
+import com.devcrawlers.simply.shopping.enums.DeliveryFlag;
+import com.devcrawlers.simply.shopping.enums.FlagStatus;
 import com.devcrawlers.simply.shopping.enums.PaymentStatus;
 import com.devcrawlers.simply.shopping.enums.ServiceEntity;
 import com.devcrawlers.simply.shopping.exception.InvalidDetailListServiceIdException;
@@ -28,6 +30,7 @@ import com.devcrawlers.simply.shopping.repository.BuyerRepository;
 import com.devcrawlers.simply.shopping.repository.ItemRepository;
 import com.devcrawlers.simply.shopping.repository.OrderItemRepository;
 import com.devcrawlers.simply.shopping.repository.OrderRepository;
+import com.devcrawlers.simply.shopping.resources.BuyerResponse;
 import com.devcrawlers.simply.shopping.resources.OrderAddResource;
 import com.devcrawlers.simply.shopping.resources.OrderItemAddResource;
 import com.devcrawlers.simply.shopping.resources.OrderUpdateResource;
@@ -67,6 +70,24 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private AuthTokenFilter authTokenFilter;
 	
+	
+	private Timestamp getCreateOrModifyDate() {
+		Calendar calendar = Calendar.getInstance();
+    	java.util.Date now = calendar.getTime();
+    	return new Timestamp(now.getTime());
+	}
+	
+	private long generateNo() {
+		List<Order> orderList = orderRepository.findAll();
+		List<Long> orderIdList = new ArrayList<>();
+		
+		for(Order orderObject : orderList) {
+			orderIdList.add(orderObject.getId());
+		}
+		
+		return IdGenerator.generateRefNos(orderIdList);	
+	}
+	
 	@Override
 	public List<Order> findAll() {
 		return orderRepository.findAll();
@@ -100,6 +121,33 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	public Optional<Order> findByBuyerIdAndPaidStatus(Long buyerId, String paidStatus) {
+		Optional<Order> isPresentOrder = orderRepository.findByBuyerIdAndPaidStatus(buyerId, paidStatus);
+		if (isPresentOrder.isPresent()) {
+			Order order = isPresentOrder.get();
+			List<OrderItem> orderItems = orderItemRepository.findByOrderId(isPresentOrder.get().getId());
+			order.setItemList(orderItems);
+			return isPresentOrder;
+		} else {
+			return Optional.empty();
+		}
+	}
+	
+	@Override
+	public BuyerResponse checkBuyerHasOrders(Long buyerId, String paidStatus) {
+		
+		BuyerResponse buyerResponse = new BuyerResponse();
+		
+		if(orderRepository.existsByBuyerIdAndPaidStatus(buyerId, paidStatus)) {
+			buyerResponse.setBuyerHasOrder(FlagStatus.YES.toString());
+		} else {
+			buyerResponse.setBuyerHasOrder(FlagStatus.NO.toString());
+		}
+		
+		return buyerResponse;
+	}
+	
+	@Override
 	public Long saveAndValidateOrder(OrderAddResource orderAddResource) {
 		
 		Order order = new Order();
@@ -111,16 +159,15 @@ public class OrderServiceImpl implements OrderService {
 			order.setBuyer(buyer.get());
 		}
 		
-		order.setServiceChargeRate(new BigDecimal(orderAddResource.getServiceChargeRate()));
-		order.setServiceCharge(new BigDecimal(orderAddResource.getServiceCharge()));
-		order.setVatChargeRate(new BigDecimal(orderAddResource.getVatChargeRate()));
-		order.setVatCharge(new BigDecimal(orderAddResource.getVatCharge()));
-		order.setNetAmount(new BigDecimal(orderAddResource.getNetAmount()));
-		order.setPaidStatus(PaymentStatus.PAID.toString());
+		order.setServiceChargeRate(BigDecimal.ZERO);
+		order.setServiceCharge(BigDecimal.ZERO);
+		order.setVatChargeRate(BigDecimal.ZERO);
+		order.setVatCharge(BigDecimal.ZERO);
+		order.setNetAmount(BigDecimal.ZERO);
+		order.setPaidStatus(PaymentStatus.PENDING.toString());
 		order.setPaymentRefNo("REF00" + generateNo());
-		order.setPaymentDate(getCreateOrModifyDate());
-		order.setDeliveryFlag(orderAddResource.getDeliveryFlag());
-		order.setStatus(orderAddResource.getStatus());
+		order.setDeliveryFlag(DeliveryFlag.NO.toString());
+		order.setStatus(CommonStatus.ACTIVE.toString());
 		order.setCreatedUser(authTokenFilter.getUsername());
 		order.setCreatedDate(getCreateOrModifyDate());
 		order = orderRepository.saveAndFlush(order);
@@ -146,7 +193,7 @@ public class OrderServiceImpl implements OrderService {
 				
 				orderItem.setQuantity(Long.parseLong(orderItemAddResource.getQuantity()));
 				orderItem.setAmount(new BigDecimal(orderItemAddResource.getAmount()));
-				orderItem.setStatus(orderItemAddResource.getStatus());
+				orderItem.setStatus(CommonStatus.ACTIVE.toString());
 				orderItem.setCreatedUser(authTokenFilter.getUsername());
 				orderItem.setCreatedDate(getCreateOrModifyDate());
 				orderItemRepository.saveAndFlush(orderItem);
@@ -156,13 +203,64 @@ public class OrderServiceImpl implements OrderService {
 		}
 		
 		return order.getId();
-		
 	}
+	
+	@Override
+	public Long saveAndValidateOrderItem(Long orderId, OrderItemAddResource orderItemAddResource) {
+		
+		OrderItem orderItem = new OrderItem();
+		
+		Optional<Order> order = orderRepository.findByIdAndStatus(orderId, CommonStatus.ACTIVE.toString());
+		if (!order.isPresent()) {
+			throw new ValidateRecordException(environment.getProperty("common.invalid-value"), "orderId");
+		} else {
+			orderItem.setOrder(order.get());
+		}
+		
+		Optional<Item> item = itemRepository.findByIdAndStatus(Long.parseLong(orderItemAddResource.getItemsId()), CommonStatus.ACTIVE.toString());
+		if (!item.isPresent()) {
+			throw new ValidateRecordException(environment.getProperty("common.invalid-value"), "itemsId");
+		}
+			
+		if(orderItemRepository.existsByOrderIdAndItemId(order.get().getId(), Long.parseLong(orderItemAddResource.getItemsId()))) {
+			throw new ValidateRecordException(environment.getProperty("order-item.unique"), "itemsId");
+		} else {
+			orderItem.setItem(item.get());
+		}
+		
+		orderItem.setQuantity(Long.parseLong(orderItemAddResource.getQuantity()));
+		orderItem.setAmount(new BigDecimal(orderItemAddResource.getAmount()));
+		orderItem.setStatus(CommonStatus.ACTIVE.toString());
+		orderItem.setCreatedUser(authTokenFilter.getUsername());
+		orderItem.setCreatedDate(getCreateOrModifyDate());
+		orderItemRepository.saveAndFlush(orderItem);
+		
+		return orderItem.getId();
+	}
+
 
 	@Override
 	public Long updateAndValidateOrder(Long id, OrderUpdateResource orderUpdateResource) {
 		
-		return null;
+		Optional<Order> isPresentOrder = orderRepository.findById(id);
+		if (!isPresentOrder.isPresent()) {
+			throw new NoRecordFoundException(environment.getProperty("common.record-not-found"));
+		}
+		
+		Order order = isPresentOrder.get();
+		order.setServiceCharge(new BigDecimal(orderUpdateResource.getServiceCharge()));
+		order.setVatCharge(new BigDecimal(orderUpdateResource.getServiceCharge()));
+		order.setNetAmount(new BigDecimal(orderUpdateResource.getNetAmount()));
+		order.setPaidStatus(orderUpdateResource.getPaidStatus());
+		order.setPaymentRefNo(orderUpdateResource.getPaymentRefNo());
+		order.setPaymentDate(getCreateOrModifyDate());
+		order.setDeliveryFlag(orderUpdateResource.getDeliveryFlag());
+		order.setModifiedUser(authTokenFilter.getUsername());
+		order.setModifiedDate(getCreateOrModifyDate());
+		order = orderRepository.saveAndFlush(order);
+		
+		return order.getId();
+		
 	}
 
 	@Override
@@ -179,24 +277,20 @@ public class OrderServiceImpl implements OrderService {
 		
 		orderRepository.deleteById(id);
 		
-		return environment.getProperty("common.deleted-id") + id;
-	}
-
-	private long generateNo() {
-		List<Order> orderList = orderRepository.findAll();
-		List<Long> orderIdList = new ArrayList<>();
-		
-		for(Order orderObject : orderList) {
-			orderIdList.add(orderObject.getId());
-		}
-		
-		return IdGenerator.generateRefNos(orderIdList);	
+		return environment.getProperty("order.deleted");
 	}
 	
-	private Timestamp getCreateOrModifyDate() {
-		Calendar calendar = Calendar.getInstance();
-    	java.util.Date now = calendar.getTime();
-    	return new Timestamp(now.getTime());
+	@Override
+	public String deleteOrderItem(Long orderItemId) {
+		
+		Optional<OrderItem> isPresentOrderItem = orderItemRepository.findById(orderItemId);
+		if (!isPresentOrderItem.isPresent()) {
+			throw new NoRecordFoundException(environment.getProperty("order-item.not-found"));
+		}
+		
+		orderItemRepository.deleteById(orderItemId);
+		
+		return environment.getProperty("order-item.deleted");
 	}
 	
 }

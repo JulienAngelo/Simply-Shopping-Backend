@@ -31,7 +31,6 @@ import com.devcrawlers.simply.shopping.resources.ItemUpdateResource;
 import com.devcrawlers.simply.shopping.resources.MessageResponseResource;
 import com.devcrawlers.simply.shopping.resources.OrderAddResource;
 import com.devcrawlers.simply.shopping.resources.OrderItemAddResource;
-import com.devcrawlers.simply.shopping.resources.OrderItemUpdateResource;
 import com.devcrawlers.simply.shopping.resources.OrderUpdateResource;
 import com.devcrawlers.simply.shopping.resources.ValidateResource;
 
@@ -195,34 +194,21 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 }
                 return new ResponseEntity<>(orderAddResource, HttpStatus.UNPROCESSABLE_ENTITY);
         	case "orderUpdateResource": 
-        		OrderUpdateResource orderUpdateResource = new OrderUpdateResource();
-                for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-                    fieldName=error.getField();
-                    if(fieldName.startsWith("itemList")) {
-                         fieldName=fieldName.replace("itemList", "");
-                             atPoint = fieldName.indexOf(']');
-                             index=Integer.parseInt(fieldName.substring(1, atPoint));
-                             fieldName=fieldName.substring(atPoint+2);
-                             for (int i=0; i<=index; i++) {
-                                 if(orderUpdateResource.getItemList()==null || orderUpdateResource.getItemList().isEmpty()) {
-                                	 orderUpdateResource.setItemList(new ArrayList<OrderItemUpdateResource>());
-                                	 orderUpdateResource.getItemList().add(i, new OrderItemUpdateResource());
-                                 }else{
-                                     if((orderUpdateResource.getItemList().size()-1)<i) {
-                                    	 orderUpdateResource.getItemList().add(i, new OrderItemUpdateResource());
-                                     }
-                                 }
-                             }
-                             sField=orderUpdateResource.getItemList().get(index).getClass().getDeclaredField(fieldName);
-                             sField.setAccessible(true);
-                             sField.set(orderUpdateResource.getItemList().get(index), error.getDefaultMessage());
-                    }else {
-                        sField =  orderUpdateResource.getClass().getDeclaredField(error.getField());
-                        sField.setAccessible(true);
-                        sField.set(orderUpdateResource.getClass().cast(orderUpdateResource), error.getDefaultMessage());
-                    }
-                }
-                return new ResponseEntity<>(orderUpdateResource, HttpStatus.UNPROCESSABLE_ENTITY);
+        		OrderUpdateResource  orderUpdateResource = new OrderUpdateResource();
+				for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+					sField =  orderUpdateResource.getClass().getDeclaredField(error.getField());
+		            sField.setAccessible(true);
+		            sField.set(orderUpdateResource.getClass().cast(orderUpdateResource), error.getDefaultMessage());
+				}
+				return new ResponseEntity<>(orderUpdateResource, HttpStatus.UNPROCESSABLE_ENTITY);
+        	case "orderItemAddResource": 
+        		OrderItemAddResource  orderItemAddResource = new OrderItemAddResource();
+				for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+					sField =  orderItemAddResource.getClass().getDeclaredField(error.getField());
+		            sField.setAccessible(true);
+		            sField.set(orderItemAddResource.getClass().cast(orderItemAddResource), error.getDefaultMessage());
+				}
+				return new ResponseEntity<>(orderItemAddResource, HttpStatus.UNPROCESSABLE_ENTITY);	
                 
 	        	default:   
 	        		return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -249,10 +235,7 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		if(ex.getActionType().equals(ActionType.ORDER_ITEM_SAVE)) {
 			OrderAddResource orderAddResource = validateOrderAddResource(ex);
 			return new ResponseEntity<>(orderAddResource, HttpStatus.UNPROCESSABLE_ENTITY);
-		}else if(ex.getActionType().equals(ActionType.ORDER_ITEM_UPDATE)) {
-			OrderUpdateResource orderUpdateResource = validateOrderUpdateResource(ex);
-			return new ResponseEntity<>(orderUpdateResource, HttpStatus.UNPROCESSABLE_ENTITY);
-		}else {
+		} else {
 			return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 	}
@@ -274,28 +257,6 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
         }
 		orderAddResources.setItemList(orderItemAddResource);
 		return orderAddResources;
-	}
-	
-	private OrderUpdateResource validateOrderUpdateResource(InvalidDetailListServiceIdException ex) {
-		OrderUpdateResource orderUpdateResources = new OrderUpdateResource();
-		List<OrderItemUpdateResource> orderItemUpdateResource=new ArrayList<>();
-		Integer index=ex.getIndex();
-		for(int i=0;i<=ex.getIndex();i++){  
-			orderItemUpdateResource.add(i, new OrderItemUpdateResource());
-		}
-		switch(ex.getServiceEntity()) 
-        {
-	        case ID:
-	        	orderItemUpdateResource.get(index).setId(ex.getMessage());
-	            break;
-        	case ITEM_ID:
-        		orderItemUpdateResource.get(index).setItemsId(ex.getMessage());
-	            break;    
-            default: 
-            	
-        }
-		orderUpdateResources.setItemList(orderItemUpdateResource);
-		return orderUpdateResources;
 	}
 
 }

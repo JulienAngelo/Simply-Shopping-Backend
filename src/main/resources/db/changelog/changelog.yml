@@ -8,6 +8,8 @@ databaseChangeLog:
     - include:
         file: "/db/changelog/changes/attributes.yml"
     - include:
+        file: "/db/changelog/changes/attribute_value.yml"    
+    - include:
         file: "/db/changelog/changes/item.yml"
     - include:
         file: "/db/changelog/changes/buyer.yml"

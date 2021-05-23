@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.devcrawlers.simply.shopping.domain.Order;
+import com.devcrawlers.simply.shopping.resources.BuyerResponse;
 import com.devcrawlers.simply.shopping.resources.OrderAddResource;
+import com.devcrawlers.simply.shopping.resources.OrderItemAddResource;
 import com.devcrawlers.simply.shopping.resources.OrderUpdateResource;
 
 /**
@@ -51,6 +53,26 @@ public interface OrderService {
 	
 	
 	/**
+	 * Find by buyer id and paid status.
+	 *
+	 * @param buyerId - the buyer id
+	 * @param paidStatus - the paid status
+	 * @return the optional
+	 */
+	public Optional<Order> findByBuyerIdAndPaidStatus(Long buyerId, String paidStatus);
+	
+	
+	/**
+	 * Check buyer has orders.
+	 *
+	 * @param buyerId - the buyer id
+	 * @param paidStatus - the paid status
+	 * @return the buyer response
+	 */
+	public BuyerResponse checkBuyerHasOrders(Long buyerId, String paidStatus);
+	
+	
+	/**
 	 * Save and validate order.
 	 *
 	 * @param orderAddResource - the order add resource
@@ -68,7 +90,17 @@ public interface OrderService {
 	 */
 	public Long updateAndValidateOrder(Long id, OrderUpdateResource orderUpdateResource);
 	
-
+	
+	/**
+	 * Save and validate order item.
+	 *
+	 * @param orderId - the order id
+	 * @param orderItemAddResource - the order item add resource
+	 * @return the long
+	 */
+	public Long saveAndValidateOrderItem(Long orderId, OrderItemAddResource orderItemAddResource);
+	
+	
 	/**
 	 * Delete order.
 	 *
@@ -76,5 +108,14 @@ public interface OrderService {
 	 * @return the string
 	 */
 	public String deleteOrder(Long id);
+	
+	
+	/**
+	 * Delete order item.
+	 *
+	 * @param orderItemId - the order item id
+	 * @return the string
+	 */
+	public String deleteOrderItem(Long orderItemId);
 	
 }

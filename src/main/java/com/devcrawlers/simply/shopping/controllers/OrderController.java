@@ -21,8 +21,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.devcrawlers.simply.shopping.domain.Order;
+import com.devcrawlers.simply.shopping.enums.PaymentStatus;
+import com.devcrawlers.simply.shopping.resources.BuyerResponse;
 import com.devcrawlers.simply.shopping.resources.MessageResponseResource;
 import com.devcrawlers.simply.shopping.resources.OrderAddResource;
+import com.devcrawlers.simply.shopping.resources.OrderItemAddResource;
 import com.devcrawlers.simply.shopping.resources.OrderUpdateResource;
 import com.devcrawlers.simply.shopping.service.OrderService;
 
@@ -47,6 +50,7 @@ public class OrderController {
 	
 	@Autowired
 	private OrderService orderService;
+	
 	
 	/**
 	 * Gets the all orders.
@@ -103,10 +107,57 @@ public class OrderController {
 		}
 	}
 	
+	
+	/**
+	 * Gets the order by buyer id and paid status.
+	 *
+	 * @param buyerId - the buyer id
+	 * @param paidStatus - the paid status
+	 * @return the order by buyer id and paid status
+	 */
+	@GetMapping(value = "/buyer/{buyerId}/status/{paidStatus}")
+	public ResponseEntity<Object> getOrderByBuyerIdAndPaidStatus(@PathVariable(value = "buyerId", required = true) Long buyerId,
+			@PathVariable(value = "paidStatus", required = true) String paidStatus) {
+		MessageResponseResource messageResponseResource = new MessageResponseResource();
+		Optional<Order> isPresentOrder = orderService.findByBuyerIdAndPaidStatus(buyerId, paidStatus);
+		if (isPresentOrder.isPresent()) {
+			return new ResponseEntity<>(isPresentOrder, HttpStatus.OK);
+		} else {
+			messageResponseResource.setMessage(environment.getProperty("common.record-not-found"));
+			return new ResponseEntity<>(messageResponseResource, HttpStatus.NO_CONTENT);
+		}
+	}
+	
+	
+	/**
+	 * Check buyer has orders.
+	 *
+	 * @param buyerId - the buyer id
+	 * @return the response entity
+	 */
+	@GetMapping(value = "/check/buyer/{buyerId}")
+	public ResponseEntity<Object> checkBuyerHasOrders(@PathVariable(value = "buyerId", required = true) Long buyerId) {
+		MessageResponseResource messageResponseResource = new MessageResponseResource();
+		BuyerResponse buyerResponse = orderService.checkBuyerHasOrders(buyerId, PaymentStatus.PENDING.toString());
+		if (buyerResponse != null) {
+			return new ResponseEntity<>(buyerResponse, HttpStatus.OK);
+		} else {
+			messageResponseResource.setMessage(environment.getProperty("common.record-not-found"));
+			return new ResponseEntity<>(messageResponseResource, HttpStatus.NO_CONTENT);
+		}
+	}
+	
+	
+	/**
+	 * Adds the order.
+	 *
+	 * @param orderAddResource - the order add resource
+	 * @return the response entity
+	 */
 	@PostMapping(value = "/save")
 	public ResponseEntity<Object> addOrder(@Valid @RequestBody OrderAddResource orderAddResource) {
 		Long orderId = orderService.saveAndValidateOrder(orderAddResource);
-		MessageResponseResource messageResponseResource = new MessageResponseResource(environment.getProperty("common.saved"), orderId.toString());
+		MessageResponseResource messageResponseResource = new MessageResponseResource(environment.getProperty("order.saved"), orderId.toString());
 		return new ResponseEntity<>(messageResponseResource, HttpStatus.CREATED);
 	}
 	
@@ -122,7 +173,7 @@ public class OrderController {
 	public ResponseEntity<Object> updateOrder(@PathVariable(value = "id", required = true) Long id,
 			@Valid @RequestBody OrderUpdateResource orderUpdateResource) {
 		Long orderId = orderService.updateAndValidateOrder(id, orderUpdateResource);
-		MessageResponseResource messageResponseResource = new MessageResponseResource(environment.getProperty("common.updated"), orderId.toString());
+		MessageResponseResource messageResponseResource = new MessageResponseResource(environment.getProperty("order.updated"), orderId.toString());
 		return new ResponseEntity<>(messageResponseResource, HttpStatus.OK);
 	}
 	
@@ -136,6 +187,31 @@ public class OrderController {
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Object> deleteOrder(@PathVariable(value = "id", required = true) Long id) {
 		String message = orderService.deleteOrder(id);
+		MessageResponseResource messageResponseResource = new MessageResponseResource(message);
+		return new ResponseEntity<>(messageResponseResource, HttpStatus.OK);
+	}
+	
+	
+	/**
+	 * Adds the order item.
+	 *
+	 * @param id - the id
+	 * @param orderItemAddResource - the order item add resource
+	 * @return the response entity
+	 */
+	@PostMapping(value = "/save/order/{id}")
+	public ResponseEntity<Object> addOrderItem(@PathVariable(value = "id", required = true) Long id,
+			@Valid @RequestBody OrderItemAddResource orderItemAddResource) {
+		Long orderItemId = orderService.saveAndValidateOrderItem(id, orderItemAddResource);
+		MessageResponseResource messageResponseResource = new MessageResponseResource(environment.getProperty("order-item.saved"), orderItemId.toString());
+		return new ResponseEntity<>(messageResponseResource, HttpStatus.CREATED);
+	}
+	
+	
+	
+	@DeleteMapping(value = "/order-item/{id}")
+	public ResponseEntity<Object> deleteOrderItem(@PathVariable(value = "id", required = true) Long id) {
+		String message = orderService.deleteOrderItem(id);
 		MessageResponseResource messageResponseResource = new MessageResponseResource(message);
 		return new ResponseEntity<>(messageResponseResource, HttpStatus.OK);
 	}
