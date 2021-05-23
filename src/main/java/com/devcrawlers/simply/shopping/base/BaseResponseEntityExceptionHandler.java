@@ -32,6 +32,8 @@ import com.devcrawlers.simply.shopping.resources.MessageResponseResource;
 import com.devcrawlers.simply.shopping.resources.OrderAddResource;
 import com.devcrawlers.simply.shopping.resources.OrderItemAddResource;
 import com.devcrawlers.simply.shopping.resources.OrderUpdateResource;
+import com.devcrawlers.simply.shopping.resources.SellerAddResource;
+import com.devcrawlers.simply.shopping.resources.SellerUpdateResource;
 import com.devcrawlers.simply.shopping.resources.ValidateResource;
 
 
@@ -209,7 +211,22 @@ public class BaseResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		            sField.set(orderItemAddResource.getClass().cast(orderItemAddResource), error.getDefaultMessage());
 				}
 				return new ResponseEntity<>(orderItemAddResource, HttpStatus.UNPROCESSABLE_ENTITY);	
-                
+        	case "sellerAddResource": 
+        		SellerAddResource  sellerAddResource = new SellerAddResource();
+				for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+					sField =  sellerAddResource.getClass().getDeclaredField(error.getField());
+		            sField.setAccessible(true);
+		            sField.set(sellerAddResource.getClass().cast(sellerAddResource), error.getDefaultMessage());
+				}
+				return new ResponseEntity<>(sellerAddResource, HttpStatus.UNPROCESSABLE_ENTITY);
+        	case "sellerUpdateResource": 
+        		SellerUpdateResource  sellerUpdateResource = new SellerUpdateResource();
+				for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+					sField =  sellerUpdateResource.getClass().getDeclaredField(error.getField());
+		            sField.setAccessible(true);
+		            sField.set(sellerUpdateResource.getClass().cast(sellerUpdateResource), error.getDefaultMessage());
+				}
+				return new ResponseEntity<>(sellerUpdateResource, HttpStatus.UNPROCESSABLE_ENTITY);
 	        	default:   
 	        		return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
 	        }
